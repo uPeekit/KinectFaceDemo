@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Face;
@@ -45,13 +39,20 @@ namespace KinectDemo
         // Used to display 1,000 points on screen.
         private List<Ellipse> _points = new List<Ellipse>();
 
-        private Boolean record = false;
-
-        const String OUTPUT_DIRECTORY = @"C:\KinectData\";
+        private Boolean _record = false;
+        private DataWriter _dataWriter;
+        private DataAnalytic _dataAnalytic;
 
         public MainWindow()
         {
             InitializeComponent();
+            //_dataWriter = new DataWriter(this);
+            _dataAnalytic = new DataAnalytic();
+        }
+
+        public bool isRecording()
+        {
+            return _record;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -121,9 +122,9 @@ namespace KinectDemo
 
             if (vertices.Count > 0)
             {
-                if(record)
+                if(_record)
                 {
-                    PersistFaceData(vertices);
+                    _dataWriter.AddFaceData(vertices);
                 }
                 if (_points.Count == 0)
                 {
@@ -133,7 +134,7 @@ namespace KinectDemo
                         {
                             Width = 2.0,
                             Height = 2.0,
-                            Fill = new SolidColorBrush(Colors.Blue)
+                            Fill = new SolidColorBrush(Colors.Red)
                         };
 
                         _points.Add(ellipse);
@@ -158,11 +159,6 @@ namespace KinectDemo
                     Canvas.SetTop(ellipse, point.Y);
                 }
             }
-        }
-
-        private void PersistFaceData(IReadOnlyList<CameraSpacePoint> vertices)
-        {
-            throw new NotImplementedException();
         }
 
         private void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e) {
@@ -209,47 +205,6 @@ namespace KinectDemo
             int stride = width * format.BitsPerPixel / 8;
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
-        }
-
-        private void SwitchSensor(object sender, RoutedEventArgs e)
-        {
-            if (_sensor == null)
-            {
-                return;
-            }
-            if (_sensor.IsOpen)
-            {
-                _sensor.Close();
-                canvas.Children.Clear();
-                _points.Clear();
-            }
-            else
-            {
-                _sensor.Open();
-            }
-        }
-
-        private void SwitchRecord(object sender, RoutedEventArgs e) {
-            if (_sensor == null || !_sensor.IsOpen)
-            {
-                return;
-            }
-            if (!record)
-            {
-                string recordFileName = GetRecordFileName();
-                record = true;
-                recordLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                record = false;
-                recordLabel.Visibility = Visibility.Hidden;
-            }
-        }
-
-        private string GetRecordFileName()
-        {
-            throw new NotImplementedException();
         }
     }
 }

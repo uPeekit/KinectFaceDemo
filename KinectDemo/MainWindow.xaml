@@ -14,18 +14,35 @@
         </Viewbox>
         <Label Name="recordLabel" Content="Recording" 
                HorizontalAlignment="Center" VerticalAlignment="Bottom"
-               Foreground="Red"
+               Foreground="Red" FontSize="20"
                Margin="10"
                Visibility="Hidden" />
+        <Label Name="buffer" Content="" 
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Foreground="Red" FontSize="20"
+               Margin="10" />
+        <Label Name="exposedBuffer" Content="" 
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Foreground="Red" FontSize="20"
+               Margin="10 40" />
+        <Label Name="fileName" Content="" 
+               HorizontalAlignment="Right" VerticalAlignment="Top"
+               Foreground="Red" FontSize="20"
+               Margin="10" />
         <Button Content="Switch" 
                 Width="70" Height="30" 
-                Margin="10" 
+                Margin="10 50" 
                 HorizontalAlignment="Left" VerticalAlignment="Bottom" 
                 Click="SwitchSensor"/>
         <Button Content="Record" 
                 Width="70" Height="30" 
                 Margin="10" 
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                HorizontalAlignment="Left" VerticalAlignment="Bottom" 
                 Click="SwitchRecord"/>
+        <Button Content="Reset" 
+                Width="70" Height="30" 
+                Margin="10" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Click="Reset"/>
     </Grid>
 </Window>
