@@ -29,28 +29,28 @@ namespace KinectDemo
             {
                 return;
             }
-            if (!_record)
+            if (!record)
             {
                 //if (!_dataWriter.StartRecording())
                 //{
                 //    return;
                 //}
-                _record = true;
-                _dataWriter = new DataWriter(this); // try this approach
-                _dataWriter.StartRecording();
+                record = true;
+                dataWriter = new DataWriter(this); // try this approach
+                dataWriter.StartRecording();
                 recordLabel.Visibility = Visibility.Visible;
             }
             else
             {
-                _record = false;
-                _dataWriter.EndRecording();
+                record = false;
+                dataWriter.EndRecording();
                 recordLabel.Visibility = Visibility.Hidden;
             }
         }
 
         private void Reset(object sender, RoutedEventArgs e)
         {
-            _dataWriter.Reset();
+            dataWriter.Reset();
         }
 
         public void SetBufferSize(int size, DataWriter writer)
@@ -62,9 +62,14 @@ namespace KinectDemo
             ExecuteUsingDispatcher(() => exposedBuffer.Content = size.ToString(), writer);
         }
 
+        public void SetFileName(string name)
+        {
+            Dispatcher.Invoke(() => fileName.Content = name);
+        }
+
         private void ExecuteUsingDispatcher(Action action, DataWriter writer)
         {
-            if (writer != _dataWriter) return;
+            if (writer != dataWriter) return;
             Dispatcher.Invoke(action);
         }
     }

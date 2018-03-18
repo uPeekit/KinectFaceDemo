@@ -39,20 +39,20 @@ namespace KinectDemo
         // Used to display 1,000 points on screen.
         private List<Ellipse> _points = new List<Ellipse>();
 
-        private Boolean _record = false;
-        private DataWriter _dataWriter;
-        private DataAnalytic _dataAnalytic;
+        private Boolean record = false;
+        private DataWriter dataWriter;
+        private DataAnalyst dataAnalyst;
 
         public MainWindow()
         {
             InitializeComponent();
             //_dataWriter = new DataWriter(this);
-            _dataAnalytic = new DataAnalytic();
+            dataAnalyst = new DataAnalyst();
         }
 
-        public bool isRecording()
+        public bool IsRecording()
         {
-            return _record;
+            return record;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -122,9 +122,9 @@ namespace KinectDemo
 
             if (vertices.Count > 0)
             {
-                if(_record)
+                if(record)
                 {
-                    _dataWriter.AddFaceData(vertices);
+                    dataWriter.AddFaceData(vertices);
                 }
                 if (_points.Count == 0)
                 {

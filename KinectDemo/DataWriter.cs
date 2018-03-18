@@ -16,12 +16,12 @@ namespace KinectDemo
         private const int BUFFER_SIZE = 50;
 
         private MainWindow mainWindow;
-        private List<IReadOnlyList<CameraSpacePoint>> _buffer;
-        private ConcurrentQueue<IReadOnlyList<CameraSpacePoint>> _exposedBuffer;
-        private string _currentFileName;
-        private StreamWriter _file;
-        private Thread _loop;
-        private bool _recording;
+        private List<IReadOnlyList<CameraSpacePoint>> buffer;
+        private ConcurrentQueue<IReadOnlyList<CameraSpacePoint>> exposedBuffer;
+        private string currentFileName;
+        private StreamWriter file;
+        private Thread loop;
+        private bool recording;
 
         public DataWriter(MainWindow mainWindow)
         {
@@ -30,19 +30,19 @@ namespace KinectDemo
 
         public bool StartRecording()
         {
-            if(_file != null)
+            if(file != null)
             {
                 MessageBox.Show("fuck off");
                 return false;
             }
-            _recording = true;
-            _currentFileName = CreateNewRecordFile();
-            _buffer = new List<IReadOnlyList<CameraSpacePoint>>();
-            _exposedBuffer = new ConcurrentQueue<IReadOnlyList<CameraSpacePoint>>();
-            _file = new StreamWriter(OUTPUT_DIRECTORY + _currentFileName, true, Encoding.ASCII, 1024);
-            _file.AutoFlush = true;
-            _loop = new Thread(Loop);
-            _loop.Start();
+            recording = true;
+            currentFileName = CreateNewRecordFile();
+            buffer = new List<IReadOnlyList<CameraSpacePoint>>();
+            exposedBuffer = new ConcurrentQueue<IReadOnlyList<CameraSpacePoint>>();
+            file = new StreamWriter(OUTPUT_DIRECTORY + currentFileName, true, Encoding.ASCII, 1024);
+            file.AutoFlush = true;
+            loop = new Thread(Loop);
+            loop.Start();
 
             return true;
         }
@@ -56,6 +56,8 @@ namespace KinectDemo
             string newName = (maxNumber + 1).ToString();
 
             File.Create(OUTPUT_DIRECTORY + newName).Dispose();
+            mainWindow.SetFileName(currentFileName + ".csv");
+
             return newName;
         }
 
@@ -63,10 +65,10 @@ namespace KinectDemo
         {
             try
             {
-                while (_recording)
+                while (recording)
                 {
                     MoveFromExposedBufferToInner(false);
-                    if (_buffer.Count >= BUFFER_SIZE)
+                    if (buffer.Count >= BUFFER_SIZE)
                     {
                         FlushBuffer();
                     }
@@ -77,7 +79,7 @@ namespace KinectDemo
             {
                 MoveFromExposedBufferToInner(true);
                 FlushBuffer();
-                _file.Close();
+                file.Close();
                 ClearFields();
                 AskRenameFile();
             }
@@ -85,60 +87,60 @@ namespace KinectDemo
 
         private void ClearFields()
         {
-            _buffer = null;
-            _exposedBuffer = null;
-            _file = null;
-            _currentFileName = null;
-            _loop = null;
+            buffer = null;
+            exposedBuffer = null;
+            file = null;
+            currentFileName = null;
+            loop = null;
         }
 
         private void AskRenameFile()
         {
-            while(mainWindow.isRecording())
+            while(mainWindow.IsRecording())
             {
                 Thread.Sleep(100);
             }
-            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter name for file " + _currentFileName, "Rename file");
-            File.Move(OUTPUT_DIRECTORY + _currentFileName, OUTPUT_DIRECTORY + newName + ".csv");
+            string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter name for file " + currentFileName, "Rename file");
+            File.Move(OUTPUT_DIRECTORY + currentFileName, OUTPUT_DIRECTORY + newName + ".csv");
         }
 
         public void Reset()
         {
-            if (_file != null)
+            if (file != null)
             {
-                _file.Close();
+                file.Close();
             }
             ClearFields();
         }
 
         public void EndRecording()
         {
-            _recording = false;
-            _loop.Abort();
+            recording = false;
+            loop.Abort();
         }
 
         public void AddFaceData(IReadOnlyList<CameraSpacePoint> vertices)
         {
-            if (!_recording)
+            if (!recording)
             {
                 return;
             }
-            _exposedBuffer.Enqueue(vertices);
-            mainWindow.SetExposedBufferSize(_exposedBuffer.Count, this);
+            exposedBuffer.Enqueue(vertices);
+            mainWindow.SetExposedBufferSize(exposedBuffer.Count, this);
         }
        
         private void MoveFromExposedBufferToInner(bool getAll)
         {
             IReadOnlyList<CameraSpacePoint> points;
-            while (getAll || _buffer.Count <= BUFFER_SIZE)
+            while (getAll || buffer.Count <= BUFFER_SIZE)
             {
-                if (!_exposedBuffer.TryDequeue(out points))
+                if (!exposedBuffer.TryDequeue(out points))
                 {
                     break;
                 }
-                _buffer.Add(points);
-                mainWindow.SetBufferSize(_buffer.Count, this);
-                mainWindow.SetExposedBufferSize(_exposedBuffer.Count, this);
+                buffer.Add(points);
+                mainWindow.SetBufferSize(buffer.Count, this);
+                mainWindow.SetExposedBufferSize(exposedBuffer.Count, this);
             }
         }
 
@@ -147,12 +149,12 @@ namespace KinectDemo
             lock (this)
             {
                 var i = 0;
-                _buffer.ForEach(points =>
+                buffer.ForEach(points =>
                 {
-                    _file.WriteLineAsync(ConvertPointsListToString(points)).Wait();
-                    mainWindow.SetBufferSize(_buffer.Count - ++i, this);
+                    file.WriteLineAsync(ConvertPointsListToString(points)).Wait();
+                    mainWindow.SetBufferSize(buffer.Count - ++i, this);
                 });
-                _buffer.Clear();
+                buffer.Clear();
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace KinectDemo
 {
-    internal class DataAnalytic
+    internal class DataAnalyst
     {
     }
 }
