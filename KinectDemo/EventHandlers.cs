@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace KinectDemo
 {
@@ -23,6 +27,11 @@ namespace KinectDemo
             }
         }
 
+        public bool IsSensorOpen()
+        {
+            return _sensor.IsOpen;
+        }
+
         private void SwitchRecord(object sender, RoutedEventArgs e)
         {
             if (_sensor == null || !_sensor.IsOpen)
@@ -31,13 +40,14 @@ namespace KinectDemo
             }
             if (!record)
             {
-                //if (!_dataWriter.StartRecording())
-                //{
-                //    return;
-                //}
+                dataWriter = new DataWriter(this);
+                try { dataWriter.StartRecording(); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Oops");
+                    return;
+                }
                 record = true;
-                dataWriter = new DataWriter(this); // try this approach
-                dataWriter.StartRecording();
                 recordLabel.Visibility = Visibility.Visible;
             }
             else
@@ -48,29 +58,83 @@ namespace KinectDemo
             }
         }
 
-        private void Reset(object sender, RoutedEventArgs e)
+        private void Analyse(object sender, RoutedEventArgs e)
         {
-            dataWriter.Reset();
+            dataAnalyst.Analyse();
+            dataAnalyst = new DataAnalyst(this);
         }
+
+        private void AddGroup(object sender, RoutedEventArgs e)
+        {
+            dataAnalyst.AddGroup();
+        }
+
+        private void ListViewItem_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var value = ((ListViewItem)sender).Content as FileList;
+            dataAnalyst.RemoveGroup(value);
+        }
+
+        private void Button_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key.Equals(Key.R))
+                SwitchRecord(sender, null);
+        }
+
+        // setters
 
         public void SetBufferSize(int size, DataWriter writer)
         {
-            ExecuteUsingDispatcher(() => buffer.Content = size.ToString(), writer);
+            if (writer != dataWriter) return;
+            Dispatcher.Invoke(() => buffer.Content = size.ToString());
         }
-        public void SetExposedBufferSize(int size, DataWriter writer)
-        {
-            ExecuteUsingDispatcher(() => exposedBuffer.Content = size.ToString(), writer);
-        }
-
+        
         public void SetFileName(string name)
         {
             Dispatcher.Invoke(() => fileName.Content = name);
         }
 
-        private void ExecuteUsingDispatcher(Action action, DataWriter writer)
+        // combobox
+
+        public string GetChosenAnalysisOption()
         {
-            if (writer != dataWriter) return;
-            Dispatcher.Invoke(action);
+            return AnalysisType.SelectedItem.ToString();
         }
+
+        // radio
+
+        public enum Mode { FOREIGN, NATIVE, NONE }
+
+        public Mode GetMode()
+        {
+            return RadioForeign.IsChecked.Value ? Mode.FOREIGN 
+                                                : (RadioNative.IsChecked.Value ? Mode.NATIVE 
+                                                                               : Mode.NONE);
+        }
+
+        // textbox
+
+        public string GetName()
+        {
+            return name.Text;
+        }
+
+        // groups list view
+
+        public List<string[]> GetGroupsList()
+        {
+            return (List<string[]>)GroupsListView.ItemsSource;
+        }
+
+        public void SetGroupsList(List<FileList> groupsList)
+        {
+            GroupsListView.ItemsSource = groupsList;
+        }
+
+        public void RefreshListView()
+        {
+            GroupsListView.Items.Refresh();
+        }
+
     }
 }

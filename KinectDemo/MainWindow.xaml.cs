@@ -16,7 +16,7 @@ namespace KinectDemo
         // Provides a Kinect sensor reference.
         private KinectSensor _sensor;
 
-        MultiSourceFrameReader _reader;
+        private MultiSourceFrameReader _reader;
 
         // Acquires body frame data.
         private BodyFrameSource _bodySource;
@@ -46,8 +46,24 @@ namespace KinectDemo
         public MainWindow()
         {
             InitializeComponent();
-            //_dataWriter = new DataWriter(this);
-            dataAnalyst = new DataAnalyst();
+            CreateFoldersIfNeeded();
+            InitAnalysisStrategies();
+            dataAnalyst = new DataAnalyst(this);
+        }
+
+        private void CreateFoldersIfNeeded()
+        {
+
+            //throw new NotImplementedException();
+        }
+
+        private void InitAnalysisStrategies()
+        {
+            AnalysisType.ItemsSource = AppDomain.CurrentDomain.GetAssemblies()
+                                                .SelectMany(s => s.GetTypes())
+                                                .Where(p => typeof(AnalysisStrategy).IsAssignableFrom(p) && !typeof(AnalysisStrategy).Equals(p))
+                                                .Select(type => type.Name);
+            AnalysisType.SelectedIndex = 0;
         }
 
         public bool IsRecording()
@@ -206,5 +222,6 @@ namespace KinectDemo
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
         }
+
     }
 }

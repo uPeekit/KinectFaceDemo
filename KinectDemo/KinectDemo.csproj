@@ -81,8 +81,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataAnalytic.cs" />
-    <Compile Include="DataWriter.cs" />
+    <Compile Include="data\AvgDistanceAnalysis.cs" />
+    <Compile Include="util\Constants.cs" />
+    <Compile Include="util\CsvHelper.cs" />
+    <Compile Include="data\DataAnalyst.cs" />
+    <Compile Include="data\DataWriter.cs" />
     <Compile Include="EventHandlers.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -129,6 +132,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0\ExtensionSDKs\Microsoft.Kinect.Face\2.0\Redist\CommonConfiguration\x64\NuiDatabase" "NuiDatabase" /e /y /i /r</PostBuildEvent>

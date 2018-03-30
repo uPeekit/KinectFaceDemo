@@ -5,30 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KinectDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
-        Loaded="Window_Loaded" >
+        Title="MainWindow" Height="450" Width="625"
+        Loaded="Window_Loaded" 
+        KeyUp="Button_KeyUp" >
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="ListViewItem">
+                <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+            </Style>
+        </Grid.Resources>
+        
         <Image Name="camera" />
         <Viewbox Stretch="Uniform">
             <Canvas Name="canvas" Width="512" Height="424" />
         </Viewbox>
+
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="top"
+                    Margin="10">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type RadioButton}">
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </StackPanel.Resources>
+            <RadioButton x:Name="RadioForeign" GroupName="Mode" Content="Foreign" />
+            <RadioButton x:Name="RadioNative" GroupName="Mode" Content="Native" />
+            <WrapPanel>
+                <Label Content="Name" />
+                <TextBox Name="name" Width="100"/>
+            </WrapPanel>
+        </StackPanel>
+        
         <Label Name="recordLabel" Content="Recording" 
                HorizontalAlignment="Center" VerticalAlignment="Bottom"
                Foreground="Red" FontSize="20"
                Margin="10"
                Visibility="Hidden" />
         <Label Name="buffer" Content="" 
-               HorizontalAlignment="Left" VerticalAlignment="Top"
+               HorizontalAlignment="Left" VerticalAlignment="Bottom"
                Foreground="Red" FontSize="20"
-               Margin="10" />
-        <Label Name="exposedBuffer" Content="" 
-               HorizontalAlignment="Left" VerticalAlignment="Top"
-               Foreground="Red" FontSize="20"
-               Margin="10 40" />
+               Margin="10 85" />
         <Label Name="fileName" Content="" 
                HorizontalAlignment="Right" VerticalAlignment="Top"
                Foreground="Red" FontSize="20"
                Margin="10" />
+        
         <Button Content="Switch" 
                 Width="70" Height="30" 
                 Margin="10 50" 
@@ -39,10 +59,25 @@
                 Margin="10" 
                 HorizontalAlignment="Left" VerticalAlignment="Bottom" 
                 Click="SwitchRecord"/>
-        <Button Content="Reset" 
+
+        <ListView Name="GroupsListView" 
+                Width="200" Height="90" 
+                Margin="10 130" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Button Content="Add group" 
+                Width="70" Height="30" 
+                Margin="10 85" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Click="AddGroup"/>
+        <ComboBox Name="AnalysisType"
+                  MinWidth="150"
+                  Margin="10 50"
+                  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <Button Name="AnalyseBtn"
+                Content="Analyse" 
                 Width="70" Height="30" 
                 Margin="10" 
                 HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Click="Reset"/>
+                Click="Analyse"/>
     </Grid>
 </Window>
