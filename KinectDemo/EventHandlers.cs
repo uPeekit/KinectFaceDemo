@@ -29,15 +29,11 @@ namespace KinectDemo
 
         public bool IsSensorOpen()
         {
-            return _sensor.IsOpen;
+            return _sensor != null && _sensor.IsOpen;
         }
 
         private void SwitchRecord(object sender, RoutedEventArgs e)
         {
-            if (_sensor == null || !_sensor.IsOpen)
-            {
-                return;
-            }
             if (!record)
             {
                 dataWriter = new DataWriter(this);
@@ -77,7 +73,7 @@ namespace KinectDemo
 
         private void Button_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key.Equals(Key.R))
+            if (!e.Source.GetType().Equals(typeof(TextBox)) && e.Key.Equals(Key.R))
                 SwitchRecord(sender, null);
         }
 

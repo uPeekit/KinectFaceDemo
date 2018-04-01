@@ -10,8 +10,6 @@ namespace KinectDemo
 {
     class CsvHelper
     {
-        private const char CSV_SEPARATOR = ';';
-
         // util
 
         public static string GetIncreasedVersionOfFile(string directory, string fileName)
@@ -31,7 +29,6 @@ namespace KinectDemo
         // read
 
         public static void ReadCsv(string filePath, 
-                                   Action<int, IEnumerable<string>> wholeLineProcessor, 
                                    Action<int, string> firstTokenProcessor, 
                                    Action<int, string> anyTokenProcessor) {
             string line;
@@ -44,9 +41,7 @@ namespace KinectDemo
             {
                 ++lineNumber;
                 isFirstToken = true;
-                iter = line.Split(CSV_SEPARATOR);
-
-                wholeLineProcessor(lineNumber, iter);
+                iter = line.Split(Constants.CSV_SEPARATOR);
 
                 foreach (var token in iter)
                 {
@@ -79,8 +74,8 @@ namespace KinectDemo
         public static void WriteCsv(string filePath, List<string> headers, List<List<string>> data)
         {
             var stream = new StreamWriter(filePath);
-            stream.WriteLineAsync(headers.Aggregate((str1, str2) => string.Join(CSV_SEPARATOR.ToString(), str1, str2))).Wait();
-            data.ForEach(line => stream.WriteLineAsync(line.Aggregate((str1, str2) => string.Join(CSV_SEPARATOR.ToString(), str1, str2))).Wait());
+            stream.WriteLineAsync(headers.Aggregate((str1, str2) => string.Join(Constants.CSV_SEPARATOR.ToString(), str1, str2))).Wait();
+            data.ForEach(line => stream.WriteLineAsync(line.Aggregate((str1, str2) => string.Join(Constants.CSV_SEPARATOR.ToString(), str1, str2))).Wait());
             stream.Close();
         }
 
@@ -96,7 +91,7 @@ namespace KinectDemo
             string result = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond).ToString();
             for (var i = 0; i < vertices.Count; ++i)
             {
-                result += CSV_SEPARATOR.ToString() + ConvertPointToString(i, vertices[i]);
+                result += Constants.CSV_SEPARATOR.ToString() + ConvertPointToString(i, vertices[i]);
             }
             return result;
         }

@@ -1,45 +1,29 @@
 ﻿using System.Linq;
 using System.IO;
 using System.Collections.Generic;
-using System.Text;
 using System;
 using System.Windows;
-using Microsoft.Kinect.Face;
+using KinectDemo.data;
 
 namespace KinectDemo
 {
     public interface AnalysisStrategy
     {
-        void AddFilePoints(List<List<Tuple<double, double, double>>> points);
+        void AddFilePoints(List<PointList> points);
+
         Dictionary<string, double> Process();
-    }
-
-    public class FileList
-    {
-        public string[] files { get; private set; }
-
-        private FileList(string[] files) { this.files = files; }
-
-        public static FileList Of(string[] files) { return new FileList(files); }
-
-        public override string ToString()
-        {
-            return files.Length == 1 
-                ? files[0].Split('\\').Last()
-                : files.Aggregate((str1, str2) => string.Join(", ", new FileInfo(str1).Name, new FileInfo(str2).Name));
-        }
     }
 
     public class DataAnalyst
     {
-        private List<List<Tuple<double, double, double>>> currentPoints = new List<List<Tuple<double, double, double>>>();
-        private string currentFile;
-        private long prevTimestamp;
-
         private MainWindow mainWindow;
         private AnalysisStrategy analysisStrategy;
 
         private List<FileList> fileGroups = new List<FileList>();
+        private List<PointList> currentPoints = new List<PointList>();
+
+        private string currentFile;
+        private long prevTimestamp;
 
         public DataAnalyst(MainWindow mainWindow)
         {
@@ -65,7 +49,7 @@ namespace KinectDemo
                 CsvHelper.GetIncreasedVersionOfFile(Constants.DIR_BASE_OUTPUT + Constants.DIR_RESULT, Constants.RESULT_FILE_NAME));
             CsvHelper.WriteCsv(
                 resultFilePath,
-                FileGroupsToHeaderList(),
+                FileGroupsToHeaders(),
                 result.Select(KeyValueToList).ToList());
 
             MessageBox.Show("Done!\n" + resultFilePath);
@@ -74,19 +58,19 @@ namespace KinectDemo
 
         private void ProcessFileList(FileList fileList, Dictionary<string, List<double>> result)
         {
-            Dictionary<string, double> singleResult = new Dictionary<string, double>();
-            foreach (var file in fileList.files)
+            Dictionary<string, double> groupResult = new Dictionary<string, double>();
+            fileList.Iterate(file =>
             {
                 try { ProcessFile(file); }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    continue;
+                    return; // works like continue to outer loop
                 }
                 analysisStrategy.AddFilePoints(currentPoints);
-            }
-            singleResult = analysisStrategy.Process();
-            singleResult.ToList().ForEach(keyValuePair =>
+            });
+            groupResult = analysisStrategy.Process();
+            groupResult.ToList().ForEach(keyValuePair =>
             {
                 if (result.ContainsKey(keyValuePair.Key))
                     result[keyValuePair.Key].Add(keyValuePair.Value);
@@ -103,10 +87,10 @@ namespace KinectDemo
             ParsePoints(file);
         }
 
-        private List<string> FileGroupsToHeaderList()
+        private List<string> FileGroupsToHeaders()
         {
             var list = new List<string>() { "" };
-            list.AddRange(fileGroups.Select(fileList => new FileInfo(fileList.files[0]).Name.Split('.')[0] + "...").ToList());
+            list.AddRange(fileGroups.Select(fileList => new FileInfo(fileList.files[0]).Name.Split('.')[0] + "..").ToList());
             return list;
         }
 
@@ -147,7 +131,6 @@ namespace KinectDemo
         private void ParsePoints(string file)
         {
             CsvHelper.ReadCsv(file, 
-                              SetScale,
                               CheckTimestamp, 
                               ProcessTokenAndAddPoint);
         }
@@ -160,35 +143,19 @@ namespace KinectDemo
             prevTimestamp = parsed;
         }
 
-        private void SetScale(int lineNumber, IEnumerable<string> lineIter)
-        {
-            if (currentPoints.Count == 0)
-                currentPoints.Add(new List<Tuple<double, double, double>>());
-            currentPoints[0].Add(GetScaleDist(lineIter));
-        }
-
-        private Tuple<double, double, double> GetScaleDist(IEnumerable<string> lineIter)
-        {
-            var right = StrToPoint(lineIter.ElementAt((int)HighDetailFacePoints.RighteyeOutercorner + 1));
-            var left = StrToPoint(lineIter.ElementAt((int)HighDetailFacePoints.LefteyeOutercorner + 1));
-
-            return new Tuple<double,double,double>(
-                Math.Sqrt(Math.Pow(right.Item1 - left.Item1, 2) + Math.Pow(right.Item2 - left.Item2, 2) + Math.Pow(right.Item3 - left.Item3, 2)), 0, 0);
-        }
-
         private void ProcessTokenAndAddPoint(int lineNumber, string token)
         {
             int pointNumber = int.Parse(token.Split(' ')[0]);
 
             if (currentPoints.Count <= pointNumber + 1)
-                currentPoints.Add(new List<Tuple<double, double, double>>());
-            currentPoints[pointNumber + 1].Add(StrToPoint(token));
+                currentPoints.Add(new PointList());
+            currentPoints[pointNumber].Add(ParsePoint(token));
         }
 
-        private Tuple<double, double, double> StrToPoint(string str)
+        private PointList.Point ParsePoint(string str)
         {
             var arr = str.Split(' ');
-            return new Tuple<double, double, double>(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
+            return PointList.Point.Of(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
         }
     }
 

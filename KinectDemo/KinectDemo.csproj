@@ -81,7 +81,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="data\AvgDistanceAnalysis.cs" />
+    <Compile Include="data\AvgDistanceAnalysisStrategy.cs" />
+    <Compile Include="data\FileList.cs" />
+    <Compile Include="data\PointList.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\CsvHelper.cs" />
     <Compile Include="data\DataAnalyst.cs" />

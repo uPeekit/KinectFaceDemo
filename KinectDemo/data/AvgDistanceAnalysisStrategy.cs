@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect.Face;
+﻿using KinectDemo.data;
+using Microsoft.Kinect.Face;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace KinectDemo
             this.directory = directory;
         }
 
-        public void AddFilePoints(List<List<Tuple<double, double, double>>> points)
+        public void AddFilePoints(List<PointList> points)
         {
             var pDeltas = CalculateDeltas(points);
             var pDeltasSums = pDeltas.Select(nPoints => nPoints.Sum()).ToList();
@@ -32,41 +33,36 @@ namespace KinectDemo
             }
         }
 
-        private List<List<double>> CalculateDeltas(List<List<Tuple<double, double, double>>> points)
+        private List<List<double>> CalculateDeltas(List<PointList> points)
         {
             List<List<double>> deltas = new List<List<double>>();
-            //var scales = points[0].Select(tuple => tuple.Item1).ToList();
-
-            for (var pointNumber = 1; pointNumber < points.Count; ++pointNumber)
+            PointList nPoints;
+            for (var pointNumber = 0; pointNumber < points.Count; ++pointNumber)
             {
-                Tuple<double, double, double> point, prevPoint = null;
-                var nPoints = points[pointNumber];
+                nPoints = points[pointNumber];
+                PointList.Point prevPoint = null;
                 double delta;
-                //double scale;
-                for (var frameNumber = 0; frameNumber < nPoints.Count; ++frameNumber)
+                nPoints.Iterate(point =>
                 {
-                    //scale = scales[frameNumber];
-                    point = nPoints[frameNumber];
-
-                    if (deltas.Count < pointNumber)
+                    if (deltas.Count <= pointNumber)
                         deltas.Add(new List<double>());
+
                     if (prevPoint != null)
                     {
                         delta = GetDelta(point, prevPoint);
-                        //deltas[pointNumber - 1].Add(delta * 100 / scale);
-                        deltas[pointNumber - 1].Add(100);
+                        deltas[pointNumber].Add(delta);
                     }
                     prevPoint = point;
-                }
+                });
             }
             return deltas;
         }
         
-        private double GetDelta(Tuple<double, double, double> p1, Tuple<double, double, double> p2)
+        private double GetDelta(PointList.Point p1, PointList.Point p2)
         {
-            var xd = p1.Item1 - p2.Item1;
-            var yd = p1.Item2 - p2.Item2;
-            var zd = p1.Item3 - p2.Item3;
+            var xd = p1.X - p2.X;
+            var yd = p1.Y - p2.Y;
+            var zd = p1.Z - p2.Z;
             return Math.Sqrt( (xd*xd) + (yd*yd) + (zd*zd) );
         }
 
