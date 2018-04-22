@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectDemo", "KinectDemo\KinectDemo.csproj", "{5F6166DE-09E3-45D9-960E-062702609628}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeltaCalculator", "ConsoleApp1\DeltaCalculator.csproj", "{A38C0126-32B5-42C0-A108-595C9E558201}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceRecordsPlayer", "FaceRecordsPlayer\FaceRecordsPlayer.csproj", "{78F59658-CCB0-4A4F-AFAA-09289C1BF642}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{5F6166DE-09E3-45D9-960E-062702609628}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F6166DE-09E3-45D9-960E-062702609628}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F6166DE-09E3-45D9-960E-062702609628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A38C0126-32B5-42C0-A108-595C9E558201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A38C0126-32B5-42C0-A108-595C9E558201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A38C0126-32B5-42C0-A108-595C9E558201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A38C0126-32B5-42C0-A108-595C9E558201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78F59658-CCB0-4A4F-AFAA-09289C1BF642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78F59658-CCB0-4A4F-AFAA-09289C1BF642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78F59658-CCB0-4A4F-AFAA-09289C1BF642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78F59658-CCB0-4A4F-AFAA-09289C1BF642}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

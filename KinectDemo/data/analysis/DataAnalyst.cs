@@ -1,49 +1,32 @@
-﻿using System.Linq;
-using System.IO;
-using System.Collections.Generic;
+﻿using KinectDemo.util;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using KinectDemo.data;
 
-namespace KinectDemo
+namespace KinectDemo.data.analysis
 {
-    public interface AnalysisStrategy
+    class DataAnalyst
     {
-        void AddFilePoints(List<PointList> points);
+        public AnalysisStrategy analysisStrategy;
 
-        Dictionary<string, double> Process();
-    }
-
-    public class DataAnalyst
-    {
-        private MainWindow mainWindow;
-        private AnalysisStrategy analysisStrategy;
-
-        private List<FileList> fileGroups = new List<FileList>();
-        private List<PointList> currentPoints = new List<PointList>();
+        public List<FileList> FileGroups { get; private set; } = new List<FileList>();
+        private List<PointPositionsList> currentPoints = new List<PointPositionsList>();
 
         private string currentFile;
         private long prevTimestamp;
 
-        public DataAnalyst(MainWindow mainWindow)
-        {
-            this.mainWindow = mainWindow;
-            this.mainWindow.SetGroupsList(fileGroups);
-        }
-
         public void Analyse()
         {
-            if (fileGroups.Count == 0) return;
-
-            Type strategyType = Type.GetType("KinectDemo." + mainWindow.GetChosenAnalysisOption());
-            analysisStrategy = (AnalysisStrategy)Activator.CreateInstance(strategyType, Constants.DIR_BASE_OUTPUT);
-            
             Dictionary<string, List<double>> result = new Dictionary<string, List<double>>();
-            foreach (var fileList in fileGroups)
+            foreach (var fileList in FileGroups)
             {
                 ProcessFileList(fileList, result);
             }
-            string resultFilePath = string.Format(@"{0}{1}{2}.csv", 
+            string resultFilePath = string.Format(@"{0}{1}{2}.csv",
                 Constants.DIR_BASE_OUTPUT,
                 Constants.DIR_RESULT,
                 CsvHelper.GetIncreasedVersionOfFile(Constants.DIR_BASE_OUTPUT + Constants.DIR_RESULT, Constants.RESULT_FILE_NAME));
@@ -53,13 +36,20 @@ namespace KinectDemo
                 result.Select(KeyValueToList).ToList());
 
             MessageBox.Show("Done!\n" + resultFilePath);
-            fileGroups.Clear();
+            FileGroups.Clear();
+        }
+
+        private List<string> FileGroupsToHeaders()
+        {
+            var list = new List<string>() { "" };
+            list.AddRange(FileGroups.Select(fileList => new FileInfo(fileList.files[0]).Name.Split('.')[0] + "..").ToList());
+            return list;
         }
 
         private void ProcessFileList(FileList fileList, Dictionary<string, List<double>> result)
         {
             Dictionary<string, double> groupResult = new Dictionary<string, double>();
-            fileList.Iterate(file =>
+            fileList.ForEach(file =>
             {
                 try { ProcessFile(file); }
                 catch (Exception e)
@@ -69,7 +59,7 @@ namespace KinectDemo
                 }
                 analysisStrategy.AddFilePoints(currentPoints);
             });
-            groupResult = analysisStrategy.Process();
+            groupResult = PointsHelper.ExtractNamedValues(analysisStrategy.GetResult());
             groupResult.ToList().ForEach(keyValuePair =>
             {
                 if (result.ContainsKey(keyValuePair.Key))
@@ -81,57 +71,22 @@ namespace KinectDemo
 
         private void ProcessFile(string file)
         {
-            currentFile = file;
             prevTimestamp = 0;
             currentPoints.Clear();
-            ParsePoints(file);
+            ParsePoints(currentFile = file);
         }
-
-        private List<string> FileGroupsToHeaders()
-        {
-            var list = new List<string>() { "" };
-            list.AddRange(fileGroups.Select(fileList => new FileInfo(fileList.files[0]).Name.Split('.')[0] + "..").ToList());
-            return list;
-        }
-
+        
         private List<string> KeyValueToList(KeyValuePair<string, List<double>> keyValuePair)
         {
             var list = new List<string>() { keyValuePair.Key };
             list.AddRange(keyValuePair.Value.Select(d => d.ToString()));
             return list;
         }
-        
-        public void AddGroup()
-        {
-            string[] files = GetChosenFiles();
-            if (files == null || files.Length == 0)
-                return;
-
-            fileGroups.Add(FileList.Of(files));
-            mainWindow.RefreshListView();
-        }
-
-        public void RemoveGroup(FileList fileList)
-        {
-            fileGroups.Remove(fileList);
-            mainWindow.RefreshListView();
-        }
-
-        private string[] GetChosenFiles()
-        {
-            var dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".csv";
-            dlg.InitialDirectory = Constants.DIR_BASE_OUTPUT;
-            dlg.Multiselect = true;
-
-            var result = dlg.ShowDialog();
-            return result.HasValue && result.Value ? dlg.FileNames : null;
-        }
 
         private void ParsePoints(string file)
         {
-            CsvHelper.ReadCsv(file, 
-                              CheckTimestamp, 
+            CsvHelper.ReadCsv(file,
+                              CheckTimestamp,
                               ProcessTokenAndAddPoint);
         }
 
@@ -148,15 +103,14 @@ namespace KinectDemo
             int pointNumber = int.Parse(token.Split(' ')[0]);
 
             if (currentPoints.Count <= pointNumber + 1)
-                currentPoints.Add(new PointList());
+                currentPoints.Add(PointPositionsList.For(pointNumber));
             currentPoints[pointNumber].Add(ParsePoint(token));
         }
 
-        private PointList.Point ParsePoint(string str)
+        private PointPositionsList.Position ParsePoint(string str)
         {
             var arr = str.Split(' ');
-            return PointList.Point.Of(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
+            return PointPositionsList.Position.Of(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
         }
     }
-
 }

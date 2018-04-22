@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KinectDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="625"
+        Title="MainWindow" Height="600" Width="800"
         Loaded="Window_Loaded" 
         KeyUp="Button_KeyUp" >
     <Grid>
@@ -15,69 +15,111 @@
             </Style>
         </Grid.Resources>
         
-        <Image Name="camera" />
-        <Viewbox Stretch="Uniform">
-            <Canvas Name="canvas" Width="512" Height="424" />
-        </Viewbox>
+        <TabControl>
+            <TabItem Header="write">
+                <Canvas>
+                    <Image Name="camera" />
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Name="canvas" Width="512" Height="424" />
+                    </Viewbox>
 
-        <StackPanel HorizontalAlignment="Left" VerticalAlignment="top"
-                    Margin="10">
-            <StackPanel.Resources>
-                <Style TargetType="{x:Type RadioButton}">
-                    <Setter Property="Margin" Value="5"/>
-                </Style>
-            </StackPanel.Resources>
-            <RadioButton x:Name="RadioForeign" GroupName="Mode" Content="Foreign" />
-            <RadioButton x:Name="RadioNative" GroupName="Mode" Content="Native" />
-            <WrapPanel>
-                <Label Content="Name" />
-                <TextBox Name="name" Width="100"/>
-            </WrapPanel>
-        </StackPanel>
-        
-        <Label Name="recordLabel" Content="Recording" 
-               HorizontalAlignment="Center" VerticalAlignment="Bottom"
-               Foreground="Red" FontSize="20"
-               Margin="10"
-               Visibility="Hidden" />
-        <Label Name="buffer" Content="" 
-               HorizontalAlignment="Left" VerticalAlignment="Bottom"
-               Foreground="Red" FontSize="20"
-               Margin="10 85" />
-        <Label Name="fileName" Content="" 
-               HorizontalAlignment="Right" VerticalAlignment="Top"
-               Foreground="Red" FontSize="20"
-               Margin="10" />
-        
-        <Button Content="Switch" 
-                Width="70" Height="30" 
-                Margin="10 50" 
-                HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                Click="SwitchSensor"/>
-        <Button Content="Record" 
-                Width="70" Height="30" 
-                Margin="10" 
-                HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                Click="SwitchRecord"/>
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="top"
+                                Margin="10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type RadioButton}">
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <RadioButton x:Name="RadioForeign" GroupName="Mode" Content="Foreign" />
+                        <RadioButton x:Name="RadioNative" GroupName="Mode" Content="Native" />
+                        <WrapPanel>
+                            <Label Content="Name" />
+                            <TextBox Name="name" Width="70"/>
+                        </WrapPanel>
+                        <WrapPanel Margin="0 5">
+                            <Label Content="Lang  " />
+                            <TextBox Name="language" Width="50"/>
+                        </WrapPanel>
+                    </StackPanel>
 
-        <ListView Name="GroupsListView" 
-                Width="200" Height="90" 
-                Margin="10 130" 
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        <Button Content="Add group" 
-                Width="70" Height="30" 
-                Margin="10 85" 
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Click="AddGroup"/>
-        <ComboBox Name="AnalysisType"
-                  MinWidth="150"
-                  Margin="10 50"
-                  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-        <Button Name="AnalyseBtn"
-                Content="Analyse" 
-                Width="70" Height="30" 
-                Margin="10" 
-                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Click="Analyse"/>
+                    <Label Name="recordLabel" Content="Recording" 
+                           HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                           Foreground="Red" FontSize="20"
+                           Margin="10"
+                           Visibility="Hidden" />
+                    <Label Name="buffer" Content="" 
+                           HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                           Foreground="Red" FontSize="20"
+                           Margin="10 85" />
+                    <Label Name="fileName" Content="" 
+                           HorizontalAlignment="Right" VerticalAlignment="Top"
+                           Foreground="Red" FontSize="20"
+                           Margin="10" />
+
+                    <Button Content="Switch" 
+                            Width="70" Height="30" 
+                            Margin="10 50" 
+                            HorizontalAlignment="Left" Canvas.Bottom="0" 
+                            Click="SwitchSensor"/>
+                    <Button Content="Record" 
+                            Width="70" Height="30" 
+                            Margin="10" 
+                            HorizontalAlignment="Left" Canvas.Bottom="0"
+                            Click="SwitchRecord"/>
+                </Canvas>
+            </TabItem>
+            <TabItem Header="analyse">
+                <Canvas>
+                    <StackPanel Canvas.Bottom="0" Canvas.Right="0">
+                        <ListView Name="GroupsListView" 
+                              Width="200" Height="90" 
+                              Margin="5"
+                              HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                        <Button Content="Add group" 
+                            Width="70" Height="30" 
+                            Margin="5"
+                            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                            Click="AddGroup"/>
+                        <ComboBox Name="AnalysisType"
+                              MinWidth="150"
+                              Margin="5"
+                              HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                        <Button Name="AnalyseBtn"
+                            Content="Analyse" 
+                            Width="70" Height="30" 
+                            Margin="5" 
+                            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                            Click="Analyse"/>
+                    </StackPanel>
+                </Canvas>
+            </TabItem>
+            <TabItem Header="play">
+                <Canvas>
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Name="playerCanvas" Background="DarkGray" Width="730" Height="540" AllowDrop="true" Drop="FileDrop" />
+                    </Viewbox>
+                    <Slider Canvas.Bottom="30" Canvas.Left="10" Height="250" Name="SliderY" Minimum="0" Maximum="500" Value="150" Orientation="Vertical" ValueChanged="SliderYChanged">
+                        <Slider.RenderTransform><RotateTransform Angle="180" CenterX="10" CenterY="120"></RotateTransform></Slider.RenderTransform>
+                    </Slider>
+                    <Slider Canvas.Bottom="10" Canvas.Left="20" Width="250" Name="SliderX" Minimum="0" Maximum="500" Value="260" ValueChanged="SliderXChanged" />
+                    <StackPanel Canvas.Bottom="0" Canvas.Right="0">
+                        <Button Name="File" Content="File" 
+                            Width="50" Height="20"
+                            Margin="5"
+                            HorizontalAlignment="Right"
+                            Click="ChooseFile" />
+                        <Button Name="Play" Content="Play" 
+                            Width="50" Height="20"
+                            Margin="5"
+                            Click="PlayFile" />
+                        <Button Name="Stop" Content="Stop" 
+                            Width="50" Height="20"
+                            Margin="5"
+                            Click="StopPlayingFile" />
+                    </StackPanel>
+                    <Label Canvas.Bottom="10" Canvas.Right="100"  Name="PlayingFileName" />
+                </Canvas>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

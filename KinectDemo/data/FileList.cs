@@ -16,10 +16,10 @@ namespace KinectDemo
         {
             return files.Length == 1 
                 ? files[0].Split('\\').Last()
-                : files.Aggregate((str1, str2) => string.Join(", ", new FileInfo(str1).Name, new FileInfo(str2).Name));
+                : files.Select(str => new FileInfo(str).Name).Aggregate((str1, str2) => string.Join(", ", str1, str2));
         }
 
-        internal void Iterate(Action<string> action) { foreach (var file in files) action(file); }
+        internal void ForEach(Action<string> action) { foreach (var file in files) action(file); }
     }
 
 }

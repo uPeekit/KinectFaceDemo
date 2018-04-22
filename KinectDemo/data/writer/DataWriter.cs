@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Collections.Concurrent;
-using System.Windows;
 using static KinectDemo.MainWindow;
-using Microsoft.Kinect.Face;
+using KinectDemo.data;
 
 namespace KinectDemo
 {
@@ -17,6 +15,7 @@ namespace KinectDemo
         private const int BUFFER_SIZE = 50;
 
         private MainWindow mainWindow;
+        private RecordMode recordMode;
         private ConcurrentQueue<IReadOnlyList<CameraSpacePoint>> buffer;
         private string fileName;
         private StreamWriter file;
@@ -30,39 +29,29 @@ namespace KinectDemo
 
         public void StartRecording()
         {
-            if (mainWindow.GetMode() == Mode.NONE) throw new Exception("Choose mode");
-            if (mainWindow.GetName().Length == 0) throw new Exception("Enter name");
             if (!mainWindow.IsSensorOpen()) throw new Exception("No");
+            if (!mainWindow.IsNameSet()) throw new Exception("Enter name");
+            if (!mainWindow.IsLanguageSet()) throw new Exception("Enter language");
+            if ((recordMode = mainWindow.GetRecordMode()) == null) throw new Exception("Choose mode");
 
             isActive = true;
 
-            string outputDir = GetOutputDirectory();
-            fileName = CreateNewRecordFile(outputDir);
+            fileName = CreateNewRecordFile();
             mainWindow.SetFileName(fileName);
 
             buffer = new ConcurrentQueue<IReadOnlyList<CameraSpacePoint>>();
-            file = new StreamWriter(outputDir + fileName, true, Encoding.ASCII, 1024);
+            file = new StreamWriter(recordMode.FullOutDir() + fileName, true, Encoding.ASCII, 1024);
             file.AutoFlush = true;
 
             loop = new Thread(Loop);
             loop.Start();
         }
 
-        private string GetOutputDirectory()
+        private string CreateNewRecordFile()
         {
-            return Constants.DIR_BASE_OUTPUT + (mainWindow.GetMode() == Mode.NATIVE ? Constants.DIR_NATIVE : Constants.DIR_FOREIGN);
-        }
-
-        private string CreateNewRecordFile(string outputDir)
-        {
-            string fileName = CsvHelper.GetIncreasedVersionOfFile(outputDir, ComposeFileNameFromUiInput()) + ".csv";
-            File.Create(outputDir + fileName).Dispose();
+            string fileName = CsvHelper.GetIncreasedVersionOfFile(recordMode.FullOutDir(), recordMode.ComposeFileName()) + ".csv";
+            File.Create(recordMode.FullOutDir() + fileName).Dispose();
             return fileName;
-        }
-
-        private string ComposeFileNameFromUiInput()
-        {
-            return (mainWindow.GetMode() == Mode.NATIVE ? Constants.PREFIX_NATIVE : Constants.PREFIX_FOREIGN) + mainWindow.GetName();
         }
 
         private void Loop()

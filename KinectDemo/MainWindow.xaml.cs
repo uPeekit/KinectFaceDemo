@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using KinectDemo.data.player;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Face;
 
@@ -41,14 +42,16 @@ namespace KinectDemo
 
         private Boolean record = false;
         private DataWriter dataWriter;
-        private DataAnalyst dataAnalyst;
+        private DataAnalysisHandler dataAnalyst;
+        private RecordsPlayer recordsPlayer;
 
         public MainWindow()
         {
             InitializeComponent();
             CreateFoldersIfNeeded();
             InitAnalysisStrategies();
-            dataAnalyst = new DataAnalyst(this);
+            dataAnalyst = new DataAnalysisHandler(this);
+            recordsPlayer = new RecordsPlayer(this);
         }
 
         private void CreateFoldersIfNeeded()
@@ -148,8 +151,8 @@ namespace KinectDemo
                     {
                         Ellipse ellipse = new Ellipse
                         {
-                            Width = 2.0,
-                            Height = 2.0,
+                            Width = 1.0,
+                            Height = 1.0,
                             Fill = new SolidColorBrush(Colors.Red)
                         };
 
@@ -222,6 +225,6 @@ namespace KinectDemo
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
         }
-
+        
     }
 }

@@ -1,9 +1,14 @@
-﻿using System;
+﻿using KinectDemo.data;
+using KinectDemo.util;
+using Microsoft.Kinect;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace KinectDemo
 {
@@ -57,7 +62,7 @@ namespace KinectDemo
         private void Analyse(object sender, RoutedEventArgs e)
         {
             dataAnalyst.Analyse();
-            dataAnalyst = new DataAnalyst(this);
+            dataAnalyst = new DataAnalysisHandler(this);
         }
 
         private void AddGroup(object sender, RoutedEventArgs e)
@@ -99,20 +104,24 @@ namespace KinectDemo
 
         // radio
 
-        public enum Mode { FOREIGN, NATIVE, NONE }
-
-        public Mode GetMode()
+        public RecordMode GetRecordMode()
         {
-            return RadioForeign.IsChecked.Value ? Mode.FOREIGN 
-                                                : (RadioNative.IsChecked.Value ? Mode.NATIVE 
-                                                                               : Mode.NONE);
+            RecordMode mode = RadioForeign.IsChecked.Value ? Constants.MODE_FOREIGN 
+                                                           : (RadioNative.IsChecked.Value ? Constants.MODE_NATIVE
+                                                                                          : null);
+            return mode?.WithLanguage(language.Text)?.WithName(name.Text);
         }
 
         // textbox
 
-        public string GetName()
+        public bool IsNameSet()
         {
-            return name.Text;
+            return name.Text.Length != 0;
+        }
+
+        public bool IsLanguageSet()
+        {
+            return language.Text.Length != 0;
         }
 
         // groups list view
@@ -130,6 +139,72 @@ namespace KinectDemo
         public void RefreshListView()
         {
             GroupsListView.Items.Refresh();
+        }
+
+        // play
+
+        private void FileDrop(object sender, DragEventArgs e)
+        {
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Note that you can have more than one file.
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // Assuming you have one file that you care about, pass it off to whatever
+                // handling code you have defined.
+                HandleChosenFile(files[0]);
+            }
+        }
+
+        public void ChooseFile(object sender, RoutedEventArgs e)
+        {
+            HandleChosenFile(FilesHelper.PromptChooseFile());
+        }
+
+        private void HandleChosenFile(string file)
+        {
+            recordsPlayer.filePath = file;
+            PlayingFileName.Content = file;
+        }
+
+        public void AddPlayerPoint(Ellipse ellipse)
+        {
+            playerCanvas.Children.Add(ellipse);
+        }
+
+        public void DisplayPoint(Ellipse point, DepthSpacePoint mappedCoords)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                Canvas.SetLeft(point, mappedCoords.X);
+                Canvas.SetTop(point, mappedCoords.Y);
+            }));
+        }
+
+        public void SetPlayingFileName(string fileName)
+        {
+            PlayingFileName.Content = fileName;
+        }
+
+        public void PlayFile(object sender, RoutedEventArgs e)
+        {
+            recordsPlayer.PlayFile();
+        }
+
+        public void StopPlayingFile(object sender, RoutedEventArgs e)
+        {
+            recordsPlayer.StopPlayingFile();
+        }
+        
+        public void SliderXChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(recordsPlayer != null) recordsPlayer.recX = (float)e.NewValue;
+        }
+
+        public void SliderYChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (recordsPlayer != null) recordsPlayer.recY = (float)e.NewValue;
         }
 
     }

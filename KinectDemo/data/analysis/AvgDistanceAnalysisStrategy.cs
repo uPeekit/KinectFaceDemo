@@ -1,5 +1,4 @@
 ﻿using KinectDemo.data;
-using Microsoft.Kinect.Face;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +9,12 @@ namespace KinectDemo
     {
         private const int POINTS_COUNT = 1347;
 
-        private string directory;
         private List<List<double>> pointsDeltaSums = new List<List<double>>();
 
-        public AvgDistanceAnalysisStrategy(string directory)
-        {
-            this.directory = directory;
-        }
-
-        public void AddFilePoints(List<PointList> points)
+        public void AddFilePoints(List<PointPositionsList> points)
         {
             var pDeltas = CalculateDeltas(points);
-            var pDeltasSums = pDeltas.Select(nPoints => nPoints.Sum()).ToList();
+            var pDeltasSums = pDeltas.Select(nPoints => nPoints.Average()).ToList();
 
             for (var i = 0; i < pDeltasSums.Count; ++i)
             {
@@ -33,16 +26,16 @@ namespace KinectDemo
             }
         }
 
-        private List<List<double>> CalculateDeltas(List<PointList> points)
+        private List<List<double>> CalculateDeltas(List<PointPositionsList> points)
         {
             List<List<double>> deltas = new List<List<double>>();
-            PointList nPoints;
+            PointPositionsList nPoints;
             for (var pointNumber = 0; pointNumber < points.Count; ++pointNumber)
             {
                 nPoints = points[pointNumber];
-                PointList.Point prevPoint = null;
+                PointPositionsList.Position prevPoint = null;
                 double delta;
-                nPoints.Iterate(point =>
+                nPoints.ForEach(point =>
                 {
                     if (deltas.Count <= pointNumber)
                         deltas.Add(new List<double>());
@@ -58,7 +51,7 @@ namespace KinectDemo
             return deltas;
         }
         
-        private double GetDelta(PointList.Point p1, PointList.Point p2)
+        private double GetDelta(PointPositionsList.Position p1, PointPositionsList.Position p2)
         {
             var xd = p1.X - p2.X;
             var yd = p1.Y - p2.Y;
@@ -66,18 +59,10 @@ namespace KinectDemo
             return Math.Sqrt( (xd*xd) + (yd*yd) + (zd*zd) );
         }
 
-        public Dictionary<string, double> Process()
+        public List<double> GetResult()
         {
-            var deltaSumsAvg = pointsDeltaSums.Select(sums => sums.Average()).ToList();
-            var specialIter = Enum.GetValues(typeof(HighDetailFacePoints)).Cast<HighDetailFacePoints>();
-            var result = SpecialPointsValuesFrom(specialIter, deltaSumsAvg);
-            pointsDeltaSums.Clear();
-            return result;
+            return pointsDeltaSums.Select(sums => sums.Average()).ToList();
         }
 
-        private Dictionary<string, double> SpecialPointsValuesFrom(IEnumerable<HighDetailFacePoints> specialIter, List<double> listFrom)
-        {
-            return specialIter.ToDictionary(pointDef => pointDef.ToString(), pointDef => listFrom[(int)pointDef]);
-        }
     }
 }
