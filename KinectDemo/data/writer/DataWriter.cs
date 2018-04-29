@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Collections.Concurrent;
 using static KinectDemo.MainWindow;
-using KinectDemo.data;
 
 namespace KinectDemo
 {
@@ -49,7 +48,7 @@ namespace KinectDemo
 
         private string CreateNewRecordFile()
         {
-            string fileName = CsvHelper.GetIncreasedVersionOfFile(recordMode.FullOutDir(), recordMode.ComposeFileName()) + ".csv";
+            string fileName = FilesHelper.GetIncreasedVersionOfFile(recordMode.FullOutDir(), recordMode.ComposeFileName()) + ".csv";
             File.Create(recordMode.FullOutDir() + fileName).Dispose();
             return fileName;
         }

@@ -98,8 +98,20 @@
     </ApplicationDefinition>
     <Compile Include="data\analysis\AnalysisStrategy.cs" />
     <Compile Include="data\analysis\DataAnalyst.cs" />
+    <Compile Include="data\converter\impl\AverageDistanceConvertStrategy.cs" />
+    <Compile Include="data\converter\ConvertStrategy.cs" />
+    <Compile Include="data\converter\DataConverter.cs" />
+    <Compile Include="data\converter\DataConvertHandler.cs" />
+    <Compile Include="data\converter\impl\FramesToTimeDeltasConvertStrategy.cs" />
+    <Compile Include="data\converter\impl\SumDistanceConvertStrategy.cs" />
+    <Compile Include="data\converter\impl\UsingPointsDeltasConvertStrategy.cs" />
     <Compile Include="data\player\RecordsPlayer.cs" />
+    <Compile Include="events\EventsAnalyse.cs" />
+    <Compile Include="events\EventsConvert.cs" />
+    <Compile Include="events\EventsPlay.cs" />
+    <Compile Include="events\EventsWriter.cs" />
     <Compile Include="util\FilesHelper.cs" />
+    <Compile Include="util\ListsHelper.cs" />
     <Compile Include="util\PointsHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -116,8 +128,7 @@
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\CsvHelper.cs" />
     <Compile Include="data\analysis\DataAnalysisHandler.cs" />
-    <Compile Include="data\write\DataWriter.cs" />
-    <Compile Include="EventHandlers.cs" />
+    <Compile Include="data\writer\DataWriter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -167,6 +178,7 @@
   <ItemGroup>
     <Resource Include="License-LGPL.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0\ExtensionSDKs\Microsoft.Kinect.Face\2.0\Redist\CommonConfiguration\x64\NuiDatabase" "NuiDatabase" /e /y /i /r</PostBuildEvent>

@@ -10,27 +10,17 @@ namespace KinectDemo
 {
     class CsvHelper
     {
-        // util
-
-        public static string GetIncreasedVersionOfFile(string directory, string fileName)
-        {
-            string[] existingNumbers = Directory.GetFiles(directory).Where(file => new FileInfo(file).Name.StartsWith(fileName))
-                                                                    .Select(file => file.Remove(0, directory.Length + fileName.Length).Split('.').First())
-                                                                    .ToArray();
-            if (existingNumbers.Length == 0) return fileName;
-
-            int parsed;
-            int maxNumber = Array.ConvertAll(existingNumbers,
-                str => int.TryParse(str, out parsed) ? parsed : 0).Max();
-
-            return fileName + (maxNumber + 1);
-        }
-
         // read
 
-        public static void ReadCsv(string filePath, 
-                                   Action<int, string> firstTokenProcessor, 
-                                   Action<int, string> anyTokenProcessor) {
+        public static void ReadCsvByTokens(string filePath,
+                                           Action<int, string> tokenProcessor)
+        {
+            ReadCsvByTokens(filePath, null, tokenProcessor);
+        }
+
+        public static void ReadCsvByTokens(string filePath, 
+                                           Action<int, string> firstTokenProcessor, 
+                                           Action<int, string> anyTokenProcessor) {
             string line;
             bool isFirstToken;
             IEnumerable<string> iter;
@@ -56,8 +46,8 @@ namespace KinectDemo
             }
             stream.Close();
         }
-
-        public static void ReadCsv(string filePath, Action<int, string> lineProcessor)
+       
+        public static void ReadCsvByLines(string filePath, Action<int, string> lineProcessor)
         {
             string line;
             var stream = new StreamReader(filePath);
@@ -81,6 +71,8 @@ namespace KinectDemo
 
         // points
 
+        // write
+
         public static void WriteCsvLine(StreamWriter file, IReadOnlyList<CameraSpacePoint> points)
         {
             file.WriteLineAsync(ConvertPointsListToString(points)).Wait();
@@ -100,5 +92,32 @@ namespace KinectDemo
         {
             return string.Format("{0} {1} {2} {3}", n.ToString(), point.X, point.Y, point.Z);
         }
+
+        // read
+
+        public static List<PointPositionsList> ParseFileToPointsPositions(string file)
+        {
+            List<PointPositionsList> points = new List<PointPositionsList>();
+            ReadCsvByTokens(file,
+                            (i, s) => { /* do nothing with first token - it is timestamp */ },
+                            (n, line) => ProcessTokenAndAddPoint(points, n, line));
+            return points;
+        }
+
+        private static void ProcessTokenAndAddPoint(List<PointPositionsList> points, int lineNumber, string token)
+        {
+            int pointNumber = int.Parse(token.Split(' ')[0]);
+
+            if (points.Count <= pointNumber + 1)
+                points.Add(PointPositionsList.For(pointNumber));
+            points[pointNumber].Add(ParsePoint(token));
+        }
+
+        private static PointPositionsList.Position ParsePoint(string str)
+        {
+            var arr = str.Split(' ');
+            return PointPositionsList.Position.Of(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
+        }
+
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using KinectDemo.data;
 
 namespace KinectDemo
 {
     public interface AnalysisStrategy
     {
-        void AddFilePoints(List<PointPositionsList> points);
+        void ConsumeFile(List<PointPositionsList> points);
 
         List<double> GetResult();
     }

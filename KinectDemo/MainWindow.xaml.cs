@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using KinectDemo.data.player;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Face;
 
@@ -44,29 +43,43 @@ namespace KinectDemo
         private DataWriter dataWriter;
         private DataAnalysisHandler dataAnalyst;
         private RecordsPlayer recordsPlayer;
+        private DataConvertHandler dataConverter;
 
         public MainWindow()
         {
             InitializeComponent();
             CreateFoldersIfNeeded();
             InitAnalysisStrategies();
+            InitConvertStrategies();
             dataAnalyst = new DataAnalysisHandler(this);
             recordsPlayer = new RecordsPlayer(this);
+            dataConverter = new DataConvertHandler(this);
         }
 
         private void CreateFoldersIfNeeded()
         {
-
+            // TODO
             //throw new NotImplementedException();
         }
 
         private void InitAnalysisStrategies()
         {
-            AnalysisType.ItemsSource = AppDomain.CurrentDomain.GetAssemblies()
-                                                .SelectMany(s => s.GetTypes())
-                                                .Where(p => typeof(AnalysisStrategy).IsAssignableFrom(p) && !typeof(AnalysisStrategy).Equals(p))
-                                                .Select(type => type.Name);
+            AnalysisType.ItemsSource = GetTypeNames(typeof(AnalysisStrategy));
             AnalysisType.SelectedIndex = 0;
+        }
+
+        private void InitConvertStrategies()
+        {
+            ConvertType.ItemsSource = GetTypeNames(typeof(ConvertStrategy));
+            ConvertType.SelectedIndex = 0;
+        }
+
+        private IEnumerable<string> GetTypeNames(Type type)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                                          .SelectMany(s => s.GetTypes())
+                                          .Where(p => type.IsAssignableFrom(p) && !type.Equals(p) && !p.IsAbstract)
+                                          .Select(t => t.Name);
         }
 
         public bool IsRecording()

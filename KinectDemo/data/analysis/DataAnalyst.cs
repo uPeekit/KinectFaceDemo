@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace KinectDemo.data.analysis
+namespace KinectDemo
 {
     class DataAnalyst
     {
@@ -29,7 +27,7 @@ namespace KinectDemo.data.analysis
             string resultFilePath = string.Format(@"{0}{1}{2}.csv",
                 Constants.DIR_BASE_OUTPUT,
                 Constants.DIR_RESULT,
-                CsvHelper.GetIncreasedVersionOfFile(Constants.DIR_BASE_OUTPUT + Constants.DIR_RESULT, Constants.RESULT_FILE_NAME));
+                FilesHelper.GetIncreasedVersionOfFile(Constants.DIR_BASE_OUTPUT + Constants.DIR_RESULT, Constants.RESULT_FILE_NAME));
             CsvHelper.WriteCsv(
                 resultFilePath,
                 FileGroupsToHeaders(),
@@ -46,6 +44,13 @@ namespace KinectDemo.data.analysis
             return list;
         }
 
+        private List<string> KeyValueToList(KeyValuePair<string, List<double>> keyValuePair)
+        {
+            var list = new List<string>() { keyValuePair.Key };
+            list.AddRange(keyValuePair.Value.Select(d => d.ToString()));
+            return list;
+        }
+
         private void ProcessFileList(FileList fileList, Dictionary<string, List<double>> result)
         {
             Dictionary<string, double> groupResult = new Dictionary<string, double>();
@@ -57,7 +62,7 @@ namespace KinectDemo.data.analysis
                     Console.WriteLine(e.Message);
                     return; // works like continue to outer loop
                 }
-                analysisStrategy.AddFilePoints(currentPoints);
+                analysisStrategy.ConsumeFile(currentPoints);
             });
             groupResult = PointsHelper.ExtractNamedValues(analysisStrategy.GetResult());
             groupResult.ToList().ForEach(keyValuePair =>
@@ -69,25 +74,19 @@ namespace KinectDemo.data.analysis
             });
         }
 
+        // moved to converter
         private void ProcessFile(string file)
         {
             prevTimestamp = 0;
             currentPoints.Clear();
             ParsePoints(currentFile = file);
         }
-        
-        private List<string> KeyValueToList(KeyValuePair<string, List<double>> keyValuePair)
-        {
-            var list = new List<string>() { keyValuePair.Key };
-            list.AddRange(keyValuePair.Value.Select(d => d.ToString()));
-            return list;
-        }
 
         private void ParsePoints(string file)
         {
-            CsvHelper.ReadCsv(file,
-                              CheckTimestamp,
-                              ProcessTokenAndAddPoint);
+            CsvHelper.ReadCsvByTokens(file,
+                                      CheckTimestamp,
+                                      ProcessTokenAndAddPoint);
         }
 
         private void CheckTimestamp(int lineNumber, string timestamp)

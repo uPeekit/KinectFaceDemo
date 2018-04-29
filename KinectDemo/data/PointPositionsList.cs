@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KinectDemo.data
+namespace KinectDemo
 {
     public class PointPositionsList
     {

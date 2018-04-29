@@ -1,11 +1,5 @@
-﻿using System.Linq;
-using System.IO;
-using System.Collections.Generic;
-using System;
-using System.Windows;
-using KinectDemo.data;
+﻿using System;
 using KinectDemo.util;
-using KinectDemo.data.analysis;
 
 namespace KinectDemo
 {
@@ -37,15 +31,13 @@ namespace KinectDemo
                 return;
 
             dataAnalyst.FileGroups.Add(FileList.Of(files));
-            mainWindow.RefreshListView();
+            mainWindow.RefreshGroupsListView();
         }
 
         public void RemoveGroup(FileList fileList)
         {
             dataAnalyst.FileGroups.Remove(fileList);
-            mainWindow.RefreshListView();
+            mainWindow.RefreshGroupsListView();
         }
-
     }
-
 }

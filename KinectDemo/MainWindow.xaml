@@ -70,26 +70,25 @@
             </TabItem>
             <TabItem Header="analyse">
                 <Canvas>
-                    <StackPanel Canvas.Bottom="0" Canvas.Right="0">
-                        <ListView Name="GroupsListView" 
-                              Width="200" Height="90" 
-                              Margin="5"
-                              HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-                        <Button Content="Add group" 
-                            Width="70" Height="30" 
-                            Margin="5"
-                            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                            Click="AddGroup"/>
+                    <ListView Name="GroupsListView" 
+                              Width="300" Height="500" 
+                              Margin="20" />
+                    <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
                         <ComboBox Name="AnalysisType"
-                              MinWidth="150"
-                              Margin="5"
-                              HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                                  MinWidth="150"
+                                  Margin="5"
+                                  HorizontalAlignment="Right" />
+                        <Button Content="Add group" 
+                                Width="70" Height="30" 
+                                Margin="5"
+                                HorizontalAlignment="Right"
+                                Click="AddGroup"/>
                         <Button Name="AnalyseBtn"
-                            Content="Analyse" 
-                            Width="70" Height="30" 
-                            Margin="5" 
-                            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                            Click="Analyse"/>
+                                Content="Analyse" 
+                                Width="70" Height="30" 
+                                Margin="5" 
+                                HorizontalAlignment="Right"
+                                Click="Analyse"/>
                     </StackPanel>
                 </Canvas>
             </TabItem>
@@ -118,6 +117,28 @@
                             Click="StopPlayingFile" />
                     </StackPanel>
                     <Label Canvas.Bottom="10" Canvas.Right="100"  Name="PlayingFileName" />
+                </Canvas>
+            </TabItem>
+            <TabItem Header="convert">
+                <Canvas>
+                    <ListView Name="ConvertFilesListView" 
+                              Width="300" Height="500" 
+                              Margin="20" />
+                    <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
+                        <ComboBox Name="ConvertType"
+                                  MinWidth="150"
+                                  Margin="5" />
+                        <Button Content="Choose files"
+                                HorizontalAlignment="Right"
+                                Width="70" Height="30" 
+                                Margin="5"
+                                Click="ChooseConvertFiles"/>
+                        <Button Content="Convert" 
+                                HorizontalAlignment="Right"
+                                Width="70" Height="30" 
+                                Margin="5"
+                                Click="Convert"/>
+                    </StackPanel>
                 </Canvas>
             </TabItem>
         </TabControl>

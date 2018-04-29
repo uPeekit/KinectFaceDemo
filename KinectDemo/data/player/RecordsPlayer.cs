@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace KinectDemo.data.player
+namespace KinectDemo
 {
     class RecordsPlayer
     {
