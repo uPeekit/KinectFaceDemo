@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,40 +42,43 @@ namespace KinectDemo
 
         private Boolean record = false;
         private DataWriter dataWriter;
-        private DataAnalysisHandler dataAnalyst;
+        private DataAnalysisHandler dataAnalysisHandler;
         private RecordsPlayer recordsPlayer;
-        private DataConvertHandler dataConverter;
+        private DataConvertHandler dataConvertHandler;
 
         public MainWindow()
         {
             InitializeComponent();
+            dataAnalysisHandler = new DataAnalysisHandler(this);
+            dataConvertHandler = new DataConvertHandler(this);
+            recordsPlayer = new RecordsPlayer(this);
             CreateFoldersIfNeeded();
             InitAnalysisStrategies();
             InitConvertStrategies();
-            dataAnalyst = new DataAnalysisHandler(this);
-            recordsPlayer = new RecordsPlayer(this);
-            dataConverter = new DataConvertHandler(this);
         }
 
         private void CreateFoldersIfNeeded()
         {
-            // TODO
-            //throw new NotImplementedException();
+            Directory.CreateDirectory(Constants.DIR_BASE_OUTPUT);
+            Directory.CreateDirectory(Constants.MODE_NATIVE.FullOutDir());
+            Directory.CreateDirectory(Constants.MODE_FOREIGN.FullOutDir());
+            Directory.CreateDirectory(Constants.DIR_BASE_OUTPUT + Constants.DIR_CONVERTED);
+            Directory.CreateDirectory(Constants.DIR_BASE_OUTPUT + Constants.DIR_ANALYSED);
         }
 
         private void InitAnalysisStrategies()
         {
-            AnalysisType.ItemsSource = GetTypeNames(typeof(AnalysisStrategy));
+            AnalysisType.ItemsSource = GetImplementations(typeof(IAnalysisStrategy));
             AnalysisType.SelectedIndex = 0;
         }
 
         private void InitConvertStrategies()
         {
-            ConvertType.ItemsSource = GetTypeNames(typeof(ConvertStrategy));
+            ConvertType.ItemsSource = GetImplementations(typeof(ConvertStrategy));
             ConvertType.SelectedIndex = 0;
         }
 
-        private IEnumerable<string> GetTypeNames(Type type)
+        private IEnumerable<string> GetImplementations(Type type)
         {
             return AppDomain.CurrentDomain.GetAssemblies()
                                           .SelectMany(s => s.GetTypes())
@@ -82,9 +86,21 @@ namespace KinectDemo
                                           .Select(t => t.Name);
         }
 
-        public bool IsRecording()
+        private void ExecuteCatchingException(Action action)
         {
-            return record;
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n\n" + ex.StackTrace, "Oops");
+            }
+        }
+
+        public void ShowPopupDone()
+        {
+            MessageBox.Show("Done!", "Yass");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -238,6 +254,6 @@ namespace KinectDemo
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
         }
-        
+
     }
 }

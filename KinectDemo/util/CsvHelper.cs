@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KinectDemo
 {
@@ -25,60 +23,68 @@ namespace KinectDemo
             bool isFirstToken;
             IEnumerable<string> iter;
 
-            var stream = new StreamReader(filePath);
-            var lineNumber = -1;
-            while ((line = stream.ReadLine()) != null)
+            using (var stream = new StreamReader(filePath))
             {
-                ++lineNumber;
-                isFirstToken = true;
-                iter = line.Split(Constants.CSV_SEPARATOR);
-
-                foreach (var token in iter)
+                var lineNumber = -1;
+                while ((line = stream.ReadLine()) != null)
                 {
-                    if (firstTokenProcessor != null && isFirstToken)
+                    ++lineNumber;
+                    isFirstToken = true;
+                    iter = line.Split(Constants.CSV_SEPARATOR);
+
+                    foreach (var token in iter)
                     {
-                        isFirstToken = false;
-                        firstTokenProcessor(lineNumber, token);
-                        continue;
+                        if (firstTokenProcessor != null && isFirstToken)
+                        {
+                            isFirstToken = false;
+                            firstTokenProcessor(lineNumber, token);
+                            continue;
+                        }
+                        anyTokenProcessor(lineNumber, token);
                     }
-                    anyTokenProcessor(lineNumber, token);
                 }
             }
-            stream.Close();
         }
-       
+
         public static void ReadCsvByLines(string filePath, Action<int, string> lineProcessor)
         {
             string line;
-            var stream = new StreamReader(filePath);
-            var lineNumber = -1;
-            while ((line = stream.ReadLine()) != null)
+            using (var stream = new StreamReader(filePath))
             {
-                lineProcessor(++lineNumber, line);
+                var lineNumber = -1;
+                while ((line = stream.ReadLine()) != null)
+                    lineProcessor(++lineNumber, line);
             }
-            stream.Close();
         }
 
         // write
 
         public static void WriteCsv(string filePath, List<string> headers, List<List<string>> data)
         {
-            var stream = new StreamWriter(filePath);
-            stream.WriteLineAsync(headers.Aggregate((str1, str2) => string.Join(Constants.CSV_SEPARATOR.ToString(), str1, str2))).Wait();
-            data.ForEach(line => stream.WriteLineAsync(line.Aggregate((str1, str2) => string.Join(Constants.CSV_SEPARATOR.ToString(), str1, str2))).Wait());
-            stream.Close();
+            using (var stream = new StreamWriter(filePath))
+            {
+                stream.WriteLineAsync(AggrListToCsvString(headers)).Wait();
+                List<string> line;
+                for (var i = 0; i < data.Count; ++i)
+                {
+                    line = data[i];
+                    stream.WriteLineAsync(AggrListToCsvString(line)).Wait();
+                }
+            }
         }
+
+        private static string AggrListToCsvString(List<string> list) => 
+            list.Aggregate((str1, str2) => string.Join(Constants.CSV_SEPARATOR.ToString(), str1, str2));
 
         // points
-
         // write
 
-        public static void WriteCsvLine(StreamWriter file, IReadOnlyList<CameraSpacePoint> points)
+        public static void WriteCameraPointsAsCsvLine(StreamWriter file, IReadOnlyList<CameraSpacePoint> points)
         {
-            file.WriteLineAsync(ConvertPointsListToString(points)).Wait();
+            file.WriteLineAsync(ConvertCameraPointsListToString(points)).Wait();
         }
 
-        private static string ConvertPointsListToString(IReadOnlyList<CameraSpacePoint> vertices)
+        private static string ConvertCameraPointsListToString(IReadOnlyList<CameraSpacePoint> vertices)
         {
             string result = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond).ToString();
             for (var i = 0; i < vertices.Count; ++i)
@@ -117,6 +123,77 @@ namespace KinectDemo
         {
             var arr = str.Split(' ');
             return PointPositionsList.Position.Of(double.Parse(arr[1]), double.Parse(arr[2]), double.Parse(arr[3]));
+        }
+
+        // converted result
+        // write
+
+        public static void WriteCsv(string resultFilePath, List<NamedIndexedList> data, bool doIndexesMatter)
+        {
+            List<List<string>> resultData = new List<List<string>>();
+            List<string> headers = new List<string>();
+            List<string> currentValuesToWrite;
+
+            List<int> indexes = data[0].IndexedValues.Select(kvPair => kvPair.Key).ToList();
+            if (doIndexesMatter) headers.Add("index");
+
+            foreach (var fileWithValues in data)
+            {
+                headers.Add(fileWithValues.Name);
+                currentValuesToWrite = fileWithValues.OnlyValues().Select(val => val.ToString()).ToList();
+                for (var currentValueIndex = 0; currentValueIndex < currentValuesToWrite.Count; ++currentValueIndex)
+                {
+                    if (resultData.Count <= currentValueIndex)
+                    {
+                        resultData.Add(new List<string>());
+                        if (doIndexesMatter) resultData[currentValueIndex].Add(indexes[currentValueIndex].ToString());
+
+                    }
+
+                    resultData[currentValueIndex].Add(currentValuesToWrite[currentValueIndex]);
+                }
+            }
+            WriteCsv(resultFilePath, headers, resultData);
+        }
+
+        // read
+
+        public static List<NamedIndexedList> ParseFileToFilesWithValues(string fileToAnalyse, bool firstIndexColumn)
+        {
+            List<NamedIndexedList> result = new List<NamedIndexedList>();
+            using (var stream = new StreamReader(fileToAnalyse))
+            {
+                string line;
+                List<string> lineTokens;
+                bool firstLine = true;
+                int valueIndex;
+                string token;
+                var i = -2;
+                while ((line = stream.ReadLine()) != null)
+                {
+                    i++;
+                    lineTokens = line.Split(Constants.CSV_SEPARATOR).ToList();
+                    for (var columnIndex = 0; columnIndex < lineTokens.Count; ++columnIndex)
+                    {
+                        if(firstIndexColumn && columnIndex == 0)
+                            continue;
+
+                        token = lineTokens[columnIndex];
+                        if (firstLine)
+                        {
+                            result.Add(new NamedIndexedList(token));
+                        }
+                        else
+                        {
+                            valueIndex = firstIndexColumn ? int.Parse(lineTokens[0]) : i;
+                            if (token.Length > 0)
+                                result[firstIndexColumn ? columnIndex-1 : columnIndex].IndexedValues.Add(valueIndex, double.Parse(token));
+                        }
+                    }
+                    firstLine = false;
+                }
+            }
+            return result;
         }
 
     }

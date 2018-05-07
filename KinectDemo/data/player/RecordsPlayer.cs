@@ -19,15 +19,16 @@ namespace KinectDemo
         public string filePath;
         public float recX = 260f;
         public float recY = 150f;
+        public float speedFactor = 1;
 
         private MainWindow mainWindow;
         private List<Ellipse> _points = new List<Ellipse>();
         private int pIndex;
         private StreamReader stream;
-        private long prevTimestamp = -1;
+        private long prevTimestamp;
 
         private CancellationTokenSource cancelTokenSource;
-        private Task task;
+        private Task playTask;
 
         public RecordsPlayer(MainWindow mainWindow)
         {
@@ -38,20 +39,21 @@ namespace KinectDemo
         {
             CreatePointsIfNeeded();
 
+            prevTimestamp = -1;
             pIndex = 0;
             stream = new StreamReader(filePath);
 
             cancelTokenSource = new CancellationTokenSource();
-            task = PlayFrames(cancelTokenSource.Token);
+            playTask = PlayFrames(cancelTokenSource.Token);
 
             try
             {
-                await task;
+                await playTask;
             }
             catch (Exception e) { }
             finally
             {
-                try { task.Dispose(); } catch(Exception e) { }
+                try { playTask.Dispose(); } catch(Exception e) { }
                 stream.Close();
             }
         }
@@ -64,8 +66,8 @@ namespace KinectDemo
             while ((line = stream.ReadLine()) != null)
             {
                 timestamp = long.Parse(line.Substring(0, 14));
-                //if(prevTimestamp > 0) await Task.Delay((int)(timestamp - prevTimestamp)/2);
-                await Task.Delay(30);
+                if (prevTimestamp > 0) await Task.Delay((int)((timestamp - prevTimestamp) / speedFactor));
+                //await Task.Delay(30);
                 prevTimestamp = timestamp;
 
                 foreach (var token in line.Split(';').Skip(1))

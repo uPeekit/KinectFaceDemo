@@ -78,7 +78,7 @@ namespace KinectDemo
         
         private void WriteLine(IReadOnlyList<CameraSpacePoint> points)
         {
-            CsvHelper.WriteCsvLine(file, points);
+            CsvHelper.WriteCameraPointsAsCsvLine(file, points);
             mainWindow.SetBufferSize(buffer.Count, this);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace KinectDemo
 {
@@ -8,21 +9,32 @@ namespace KinectDemo
     {
         private void Convert(object sender, RoutedEventArgs e)
         {
-            try
+            ExecuteCatchingException(() =>
             {
-                dataConverter.Convert();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Oops");
-                return;
-            }
-            dataConverter = new DataConvertHandler(this);
+                dataConvertHandler.Convert();
+                dataConvertHandler = new DataConvertHandler(this);
+
+                ShowPopupDone();
+            });
         }
 
         private void ChooseConvertFiles(object sender, RoutedEventArgs e)
         {
-            dataConverter.ChooseFiles();
+            dataConvertHandler.ChooseFiles();
+        }
+
+        private void ConvertType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            dataConvertHandler.SetConvertStrategy(GetChosenConvertOption());
+            if ((ConvertParametersDescription.Content = dataConvertHandler.GetParametersDescription()) == null)
+                SetVisibility(false, ConvertParametersDescription, ConvertParameters);
+            else
+                SetVisibility(true, ConvertParametersDescription, ConvertParameters);
+        }
+
+        private void SetVisibility(bool shohuldBeVisible, params UIElement[] elements)
+        {
+            foreach (var el in elements) { el.Visibility = shohuldBeVisible ? Visibility.Visible : Visibility.Hidden; }
         }
 
         // setters
@@ -38,5 +50,16 @@ namespace KinectDemo
         {
             return ConvertType.SelectedItem.ToString();
         }
+
+        public string GetConvertId()
+        {
+            return ConvertId.Text;
+        }
+
+        public string GetConvertParameters()
+        {
+            return ConvertParameters.Text;
+        }
+
     }
 }

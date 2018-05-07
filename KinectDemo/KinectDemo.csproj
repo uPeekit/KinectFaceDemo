@@ -96,15 +96,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="data\analysis\AnalysisStrategy.cs" />
+    <Compile Include="data\analysis\IAnalysisStrategy.cs" />
     <Compile Include="data\analysis\DataAnalyst.cs" />
-    <Compile Include="data\converter\impl\AverageDistanceConvertStrategy.cs" />
-    <Compile Include="data\converter\ConvertStrategy.cs" />
+    <Compile Include="data\converter\strategy\impl\CommonValues.cs" />
+    <Compile Include="data\analysis\impl\DummyAnalyse.cs" />
+    <Compile Include="data\converter\strategy\impl\DistinctValuesCount.cs" />
+    <Compile Include="data\converter\strategy\impl\MostMovingPoints.cs" />
+    <Compile Include="data\converter\strategy\NoIndexesOnlyValueConvertStrategy.cs" />
+    <Compile Include="data\FileWithValues.cs" />
+    <Compile Include="data\converter\strategy\impl\AverageDistance.cs" />
+    <Compile Include="data\converter\strategy\ConvertStrategy.cs" />
     <Compile Include="data\converter\DataConverter.cs" />
     <Compile Include="data\converter\DataConvertHandler.cs" />
-    <Compile Include="data\converter\impl\FramesToTimeDeltasConvertStrategy.cs" />
-    <Compile Include="data\converter\impl\SumDistanceConvertStrategy.cs" />
-    <Compile Include="data\converter\impl\UsingPointsDeltasConvertStrategy.cs" />
+    <Compile Include="data\converter\strategy\impl\FramesToTimeDeltas.cs" />
+    <Compile Include="data\converter\strategy\impl\SumDistance.cs" />
+    <Compile Include="data\converter\strategy\impl\UsingPointsDeltasConvertStrategy.cs" />
     <Compile Include="data\player\RecordsPlayer.cs" />
     <Compile Include="events\EventsAnalyse.cs" />
     <Compile Include="events\EventsConvert.cs" />
@@ -121,8 +127,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="data\analysis\AvgDistanceAnalysisStrategy.cs" />
-    <Compile Include="data\FileList.cs" />
     <Compile Include="data\PointPositionsList.cs" />
     <Compile Include="data\RecordMode.cs" />
     <Compile Include="util\Constants.cs" />

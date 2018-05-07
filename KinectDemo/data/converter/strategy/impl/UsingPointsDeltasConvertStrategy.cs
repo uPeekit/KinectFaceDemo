@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KinectDemo
 {
     abstract class UsingPointsDeltasConvertStrategy : ConvertStrategy
     {
-        public abstract string ResultFileName { get; set; }
+        public override string ParametersDescription { get; set; } = null;
 
-        public List<double> ConsumeFile(string file)
+        public override List<NamedIndexedList> ConsumeFiles(string parameters, params string[] files)
         {
-            List<PointPositionsList> pointsPositions = CsvHelper.ParseFileToPointsPositions(file);
-            List<List<double>> pointsDeltas = CalculateDeltas(pointsPositions);
+            List<List<PointPositionsList>> filesPointsPositions = files.Select(file => CsvHelper.ParseFileToPointsPositions(file)).ToList();
+            List<List<List<double>>> filesPointsDeltas = filesPointsPositions.Select(filePointPositions => CalculateDeltas(filePointPositions)).ToList();
+            List<List<double>> filesResults = filesPointsDeltas.Select(pointsDeltas => pointsDeltas.Select(DeltasToResult).ToList()).ToList();
 
-            return pointsDeltas.Select(DeltasToResultFunc()).ToList();
+            return files.Select(file => new NamedIndexedList(file))
+                        .Select((fileWithValues, fileIndex) =>
+                        {
+                            fileWithValues.SetValuesAutoIndexed(filesResults[fileIndex]);
+                            return fileWithValues;
+                        }).ToList();
         }
 
-        public abstract Func<List<double>, double> DeltasToResultFunc();
+        public abstract double DeltasToResult(List<double> deltas);
 
         private List<List<double>> CalculateDeltas(List<PointPositionsList> points)
         {
@@ -54,14 +57,6 @@ namespace KinectDemo
             return Math.Sqrt((xd * xd) + (yd * yd) + (zd * zd));
         }
 
-        public string GetLogSummary(string filePath, List<double> res)
-        {
-            return string.Format("{0} {4,-35} {1,-30} min: {2}, max: {3}", DateTime.Now, new FileInfo(filePath).Name, res.Min(), res.Max(), GetType().Name);
-        }
-
-        public bool DoIndexesMatter()
-        {
-            return true;
-        }
+        public override bool DoIndexesMatter() => true;
     }
 }

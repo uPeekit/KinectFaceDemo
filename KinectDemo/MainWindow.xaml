@@ -9,12 +9,6 @@
         Loaded="Window_Loaded" 
         KeyUp="Button_KeyUp" >
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="ListViewItem">
-                <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
-            </Style>
-        </Grid.Resources>
-        
         <TabControl>
             <TabItem Header="write">
                 <Canvas>
@@ -70,19 +64,20 @@
             </TabItem>
             <TabItem Header="analyse">
                 <Canvas>
-                    <ListView Name="GroupsListView" 
+                    <ListView Name="AnalyseFileListView" 
                               Width="300" Height="500" 
                               Margin="20" />
                     <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
+                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="id" /><TextBox Width="100" Name="AnalyseId"/></WrapPanel>
                         <ComboBox Name="AnalysisType"
                                   MinWidth="150"
                                   Margin="5"
-                                  HorizontalAlignment="Right" />
-                        <Button Content="Add group" 
+                                  HorizontalAlignment="Right"/>
+                        <Button Content="Choose File" 
                                 Width="70" Height="30" 
                                 Margin="5"
                                 HorizontalAlignment="Right"
-                                Click="AddGroup"/>
+                                Click="ChooseAnalyseFile"/>
                         <Button Name="AnalyseBtn"
                                 Content="Analyse" 
                                 Width="70" Height="30" 
@@ -97,10 +92,11 @@
                     <Viewbox Stretch="Uniform">
                         <Canvas Name="playerCanvas" Background="DarkGray" Width="730" Height="540" AllowDrop="true" Drop="FileDrop" />
                     </Viewbox>
-                    <Slider Canvas.Bottom="30" Canvas.Left="10" Height="250" Name="SliderY" Minimum="0" Maximum="500" Value="150" Orientation="Vertical" ValueChanged="SliderYChanged">
+                    <WrapPanel Canvas.Top="20" Canvas.Left="20"><Label Content="Speed" /><Slider Width="500" Name="SliderSpeed" Minimum="0.1" Maximum="4" Value="1" ValueChanged="SliderSpeedChanged" /></WrapPanel>
+                    <Slider Canvas.Bottom="30" Canvas.Left="10" Height="250" Name="SliderY" Minimum="-100" Maximum="500" Value="150" Orientation="Vertical" ValueChanged="SliderYChanged">
                         <Slider.RenderTransform><RotateTransform Angle="180" CenterX="10" CenterY="120"></RotateTransform></Slider.RenderTransform>
                     </Slider>
-                    <Slider Canvas.Bottom="10" Canvas.Left="20" Width="250" Name="SliderX" Minimum="0" Maximum="500" Value="260" ValueChanged="SliderXChanged" />
+                    <Slider Canvas.Bottom="10" Canvas.Left="20" Width="250" Name="SliderX" Minimum="-100" Maximum="500" Value="260" ValueChanged="SliderXChanged" />
                     <StackPanel Canvas.Bottom="0" Canvas.Right="0">
                         <Button Name="File" Content="File" 
                             Width="50" Height="20"
@@ -125,10 +121,13 @@
                               Width="300" Height="500" 
                               Margin="20" />
                     <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
+                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="id" /><TextBox Width="100" Name="ConvertId"/></WrapPanel>
+                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="" Name="ConvertParametersDescription" /><TextBox Width="100" Name="ConvertParameters"/></WrapPanel>
                         <ComboBox Name="ConvertType"
                                   MinWidth="150"
-                                  Margin="5" />
-                        <Button Content="Choose files"
+                                  Margin="5"
+                                  SelectionChanged="ConvertType_SelectionChanged"/>
+                        <Button Content="Choose Files"
                                 HorizontalAlignment="Right"
                                 Width="70" Height="30" 
                                 Margin="5"

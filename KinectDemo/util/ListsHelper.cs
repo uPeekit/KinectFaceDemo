@@ -11,6 +11,7 @@ namespace KinectDemo
             List<List<string>> result = new List<List<string>>();
             List<string> currentDataLine = null;
             int linesCount = valuesColumns[0].Count;
+            List<double> currentColumn;
 
             for (var resultLineIndex = 0; resultLineIndex < linesCount; ++resultLineIndex)
             {
@@ -21,7 +22,8 @@ namespace KinectDemo
                     {
                         currentDataLine.Add(resultLineIndex.ToString());
                     }
-                    currentDataLine.Add(valuesColumns[currentColumnIndex][resultLineIndex].ToString());
+                    currentColumn = valuesColumns[currentColumnIndex];
+                    currentDataLine.Add(currentColumn.Count > resultLineIndex ? currentColumn[resultLineIndex].ToString() : "");
                 }
             }
             return result;

@@ -1,5 +1,4 @@
 ﻿using System;
-using KinectDemo.util;
 
 namespace KinectDemo
 {
@@ -11,33 +10,34 @@ namespace KinectDemo
         public DataAnalysisHandler(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            this.mainWindow.SetGroupsList(dataAnalyst.FileGroups);
+            mainWindow.SetAnalyseFiles(null);
         }
 
         public void Analyse()
         {
-            if (dataAnalyst.FileGroups.Count == 0) return;
+            if (dataAnalyst.FilesToAnalyse == null || dataAnalyst.FilesToAnalyse.Length == 0)
+                throw new Exception("file.....!");
+            if ((dataAnalyst.AnalyseId = mainWindow.GetAnalyseId()).Length == 0)
+                throw new Exception("set id");
 
-            Type strategyType = Type.GetType("KinectDemo." + mainWindow.GetChosenAnalysisOption());
-            dataAnalyst.analysisStrategy = (AnalysisStrategy)Activator.CreateInstance(strategyType);
-
-            dataAnalyst.Analyse();
+            dataAnalyst.Analyse(null);
         }
 
-        public void AddGroup()
+        public void ResetFile()
         {
-            string[] files = FilesHelper.PromptChooseFiles();
-            if (files == null || files.Length == 0)
-                return;
-
-            dataAnalyst.FileGroups.Add(FileList.Of(files));
-            mainWindow.RefreshGroupsListView();
+            dataAnalyst.FilesToAnalyse = new string[] { };
         }
 
-        public void RemoveGroup(FileList fileList)
+        public void ChooseFile()
         {
-            dataAnalyst.FileGroups.Remove(fileList);
-            mainWindow.RefreshGroupsListView();
+            string[] file = dataAnalyst.FilesToAnalyse = FilesHelper.PromptChooseFiles();
+            mainWindow.SetAnalyseFiles(file);
+        }
+
+        public void SetAnalysisStrategy(string strategyName)
+        {
+            Type strategyType = Type.GetType("KinectDemo." + strategyName);
+            dataAnalyst.analysisStrategy = (IAnalysisStrategy)Activator.CreateInstance(strategyType);
         }
     }
 }

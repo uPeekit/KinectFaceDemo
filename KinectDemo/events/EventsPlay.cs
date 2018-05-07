@@ -1,5 +1,4 @@
-﻿using KinectDemo.util;
-using Microsoft.Kinect;
+﻿using Microsoft.Kinect;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,6 +60,11 @@ namespace KinectDemo
         private void SliderYChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (recordsPlayer != null) recordsPlayer.recY = (float)e.NewValue;
+        }
+
+        private void SliderSpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (recordsPlayer != null) recordsPlayer.speedFactor = (float)e.NewValue;
         }
 
         // setters

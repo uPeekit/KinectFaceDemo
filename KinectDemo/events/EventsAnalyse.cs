@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace KinectDemo
 {
@@ -9,43 +10,35 @@ namespace KinectDemo
     {
         private void Analyse(object sender, RoutedEventArgs e)
         {
-            dataAnalyst.Analyse();
-            dataAnalyst = new DataAnalysisHandler(this);
+            ExecuteCatchingException(() =>             
+            {
+                dataAnalysisHandler.Analyse();
+
+                SetAnalyseFiles(new string[] { });
+                dataAnalysisHandler.ResetFile();
+
+                ShowPopupDone();
+            });
         }
 
-        private void AddGroup(object sender, RoutedEventArgs e)
+        private void ChooseAnalyseFile(object sender, RoutedEventArgs e)
         {
-            dataAnalyst.AddGroup();
-        }
-
-        private void ListViewItem_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            var value = ((ListViewItem)sender).Content as FileList;
-            dataAnalyst.RemoveGroup(value);
-        }
-
-        public void RefreshGroupsListView()
-        {
-            GroupsListView.Items.Refresh();
+            dataAnalysisHandler.ChooseFile();
         }
 
         // getters
-
-        public string GetChosenAnalysisOption()
+        
+        public string GetAnalyseId()
         {
-            return AnalysisType.SelectedItem.ToString();
-        }
-
-        public List<string[]> GetGroupsList()
-        {
-            return (List<string[]>)GroupsListView.ItemsSource;
+            return AnalyseId.Text;
         }
 
         // setters
 
-        public void SetGroupsList(List<FileList> groupsList)
+        public void SetAnalyseFiles(string[] files)
         {
-            GroupsListView.ItemsSource = groupsList;
+            AnalyseFileListView.ItemsSource = files;
         }
+
     }
 }
