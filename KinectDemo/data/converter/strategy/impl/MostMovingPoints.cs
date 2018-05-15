@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace KinectDemo
@@ -17,7 +16,7 @@ namespace KinectDemo
         {
             result = new List<NamedIndexedList>();
             int values_number = int.Parse(parameters);
-            List<NamedIndexedList> parsedFiles = files.SelectMany(file => CsvHelper.ParseFileToFilesWithValues(file, true)).ToList();
+            List<NamedIndexedList> parsedFiles = files.SelectMany(file => CsvHelper.ParseFileToNamedIndexedLists(file, true)).ToList();
 
             foreach (var fileWithValues in parsedFiles)
             {

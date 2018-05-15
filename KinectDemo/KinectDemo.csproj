@@ -96,14 +96,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="data\analysis\IAnalysisStrategy.cs" />
-    <Compile Include="data\analysis\DataAnalyst.cs" />
     <Compile Include="data\converter\strategy\impl\CommonValues.cs" />
-    <Compile Include="data\analysis\impl\DummyAnalyse.cs" />
     <Compile Include="data\converter\strategy\impl\DistinctValuesCount.cs" />
     <Compile Include="data\converter\strategy\impl\MostMovingPoints.cs" />
-    <Compile Include="data\converter\strategy\NoIndexesOnlyValueConvertStrategy.cs" />
-    <Compile Include="data\FileWithValues.cs" />
+    <Compile Include="data\converter\strategy\NoIndexesConvertStrategy.cs" />
+    <Compile Include="data\parametrized_converter\impl\DummyParametrConverter.cs" />
+    <Compile Include="data\parametrized_converter\impl\PrepareLabeledData.cs" />
+    <Compile Include="data\parametrized_converter\ParametrizedConverter.cs" />
+    <Compile Include="data\parametrized_converter\options\FileSelector.cs" />
+    <Compile Include="data\parametrized_converter\options\Parameter.cs" />
+    <Compile Include="data\parametrized_converter\IParametrizedConvertStrategy.cs" />
+    <Compile Include="data\parametrized_converter\ParametrizedConverterHandler.cs" />
+    <Compile Include="data\NamedIndexedList.cs" />
     <Compile Include="data\converter\strategy\impl\AverageDistance.cs" />
     <Compile Include="data\converter\strategy\ConvertStrategy.cs" />
     <Compile Include="data\converter\DataConverter.cs" />
@@ -112,8 +116,8 @@
     <Compile Include="data\converter\strategy\impl\SumDistance.cs" />
     <Compile Include="data\converter\strategy\impl\UsingPointsDeltasConvertStrategy.cs" />
     <Compile Include="data\player\RecordsPlayer.cs" />
-    <Compile Include="events\EventsAnalyse.cs" />
     <Compile Include="events\EventsConvert.cs" />
+    <Compile Include="events\EventsParametrizedConvert.cs" />
     <Compile Include="events\EventsPlay.cs" />
     <Compile Include="events\EventsWriter.cs" />
     <Compile Include="util\FilesHelper.cs" />
@@ -131,7 +135,6 @@
     <Compile Include="data\RecordMode.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\CsvHelper.cs" />
-    <Compile Include="data\analysis\DataAnalysisHandler.cs" />
     <Compile Include="data\writer\DataWriter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

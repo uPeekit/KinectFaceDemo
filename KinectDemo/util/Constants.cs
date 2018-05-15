@@ -6,7 +6,6 @@
 
         public const string DIR_BASE_OUTPUT = @"C:\KinectData\";
         public const string DIR_CONVERTED = @"converted\";
-        public const string DIR_ANALYSED = @"analysed\";
 
         public const string LOG_FILE_NAME = "log.txt";
 

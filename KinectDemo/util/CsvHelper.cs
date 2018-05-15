@@ -158,7 +158,7 @@ namespace KinectDemo
 
         // read
 
-        public static List<NamedIndexedList> ParseFileToFilesWithValues(string fileToAnalyse, bool firstIndexColumn)
+        public static List<NamedIndexedList> ParseFileToNamedIndexedLists(string fileToAnalyse, bool firstIndexColumn)
         {
             List<NamedIndexedList> result = new List<NamedIndexedList>();
             using (var stream = new StreamReader(fileToAnalyse))

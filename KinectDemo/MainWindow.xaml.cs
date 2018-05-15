@@ -42,19 +42,19 @@ namespace KinectDemo
 
         private Boolean record = false;
         private DataWriter dataWriter;
-        private DataAnalysisHandler dataAnalysisHandler;
         private RecordsPlayer recordsPlayer;
         private DataConvertHandler dataConvertHandler;
+        private ParametrizedConverterHandler parametrizedConverterHandler;
 
         public MainWindow()
         {
             InitializeComponent();
-            dataAnalysisHandler = new DataAnalysisHandler(this);
             dataConvertHandler = new DataConvertHandler(this);
+            parametrizedConverterHandler = new ParametrizedConverterHandler(this);
             recordsPlayer = new RecordsPlayer(this);
             CreateFoldersIfNeeded();
-            InitAnalysisStrategies();
-            InitConvertStrategies();
+            InitCombobox(typeof(ConvertStrategy), ConvertType);
+            InitCombobox(typeof(IParametrizedConvertStrategy), ParametrizedConvertType);
         }
 
         private void CreateFoldersIfNeeded()
@@ -63,19 +63,12 @@ namespace KinectDemo
             Directory.CreateDirectory(Constants.MODE_NATIVE.FullOutDir());
             Directory.CreateDirectory(Constants.MODE_FOREIGN.FullOutDir());
             Directory.CreateDirectory(Constants.DIR_BASE_OUTPUT + Constants.DIR_CONVERTED);
-            Directory.CreateDirectory(Constants.DIR_BASE_OUTPUT + Constants.DIR_ANALYSED);
         }
 
-        private void InitAnalysisStrategies()
+        private void InitCombobox(Type type, ComboBox combobox)
         {
-            AnalysisType.ItemsSource = GetImplementations(typeof(IAnalysisStrategy));
-            AnalysisType.SelectedIndex = 0;
-        }
-
-        private void InitConvertStrategies()
-        {
-            ConvertType.ItemsSource = GetImplementations(typeof(ConvertStrategy));
-            ConvertType.SelectedIndex = 0;
+            combobox.ItemsSource = GetImplementations(type);
+            combobox.SelectedIndex = 0;
         }
 
         private IEnumerable<string> GetImplementations(Type type)
@@ -254,6 +247,6 @@ namespace KinectDemo
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixelData, stride);
         }
-
+        
     }
 }

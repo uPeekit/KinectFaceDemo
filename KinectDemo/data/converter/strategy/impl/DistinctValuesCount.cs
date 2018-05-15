@@ -14,7 +14,7 @@ namespace KinectDemo
 
         public override List<NamedIndexedList> ConsumeFiles(string parameters, params string[] files)
         {
-            List<NamedIndexedList> filesWithValues = files.SelectMany(file => CsvHelper.ParseFileToFilesWithValues(file, false)).ToList();
+            List<NamedIndexedList> filesWithValues = files.SelectMany(file => CsvHelper.ParseFileToNamedIndexedLists(file, false)).ToList();
             foreach (var fileWithValues in filesWithValues)
             {
                 foreach (int value in fileWithValues.OnlyValues())

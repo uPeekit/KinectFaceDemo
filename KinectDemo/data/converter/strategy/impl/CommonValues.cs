@@ -13,7 +13,7 @@ namespace KinectDemo
 
         public override List<NamedIndexedList> ConsumeFiles(string parameters, params string[] files)
         {
-            List<NamedIndexedList> filesWithValues = files.SelectMany(file => CsvHelper.ParseFileToFilesWithValues(file, false)).ToList();
+            List<NamedIndexedList> filesWithValues = files.SelectMany(file => CsvHelper.ParseFileToNamedIndexedLists(file, false)).ToList();
             var i = 0;
             result = new NamedIndexedList("combined")
             {

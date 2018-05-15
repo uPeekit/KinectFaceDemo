@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace KinectDemo
 {
@@ -23,8 +22,6 @@ namespace KinectDemo
 
         public void Convert()
         {
-            Type strategyType = Type.GetType("KinectDemo." + mainWindow.GetChosenConvertOption());
-            dataConverter.ConvertStrategy = (ConvertStrategy)Activator.CreateInstance(strategyType);
             if ((dataConverter.ConvertId = mainWindow.GetConvertId()).Length == 0)
                 throw new Exception("set id");
 

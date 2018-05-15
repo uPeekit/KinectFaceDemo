@@ -12,8 +12,8 @@
         <TabControl>
             <TabItem Header="write">
                 <Canvas>
-                    <Image Name="camera" />
-                    <Viewbox Stretch="Uniform">
+                    <Image Name="camera" Margin="150 0 0 0" />
+                    <Viewbox Stretch="Uniform" Margin="150 0 0 0">
                         <Canvas Name="canvas" Width="512" Height="424" />
                     </Viewbox>
 
@@ -62,31 +62,6 @@
                             Click="SwitchRecord"/>
                 </Canvas>
             </TabItem>
-            <TabItem Header="analyse">
-                <Canvas>
-                    <ListView Name="AnalyseFileListView" 
-                              Width="300" Height="500" 
-                              Margin="20" />
-                    <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
-                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="id" /><TextBox Width="100" Name="AnalyseId"/></WrapPanel>
-                        <ComboBox Name="AnalysisType"
-                                  MinWidth="150"
-                                  Margin="5"
-                                  HorizontalAlignment="Right"/>
-                        <Button Content="Choose File" 
-                                Width="70" Height="30" 
-                                Margin="5"
-                                HorizontalAlignment="Right"
-                                Click="ChooseAnalyseFile"/>
-                        <Button Name="AnalyseBtn"
-                                Content="Analyse" 
-                                Width="70" Height="30" 
-                                Margin="5" 
-                                HorizontalAlignment="Right"
-                                Click="Analyse"/>
-                    </StackPanel>
-                </Canvas>
-            </TabItem>
             <TabItem Header="play">
                 <Canvas>
                     <Viewbox Stretch="Uniform">
@@ -96,7 +71,7 @@
                     <Slider Canvas.Bottom="30" Canvas.Left="10" Height="250" Name="SliderY" Minimum="-100" Maximum="500" Value="150" Orientation="Vertical" ValueChanged="SliderYChanged">
                         <Slider.RenderTransform><RotateTransform Angle="180" CenterX="10" CenterY="120"></RotateTransform></Slider.RenderTransform>
                     </Slider>
-                    <Slider Canvas.Bottom="10" Canvas.Left="20" Width="250" Name="SliderX" Minimum="-100" Maximum="500" Value="260" ValueChanged="SliderXChanged" />
+                    <Slider Canvas.Bottom="10" Canvas.Left="40" Width="250" Name="SliderX" Minimum="-100" Maximum="500" Value="260" ValueChanged="SliderXChanged" />
                     <StackPanel Canvas.Bottom="0" Canvas.Right="0">
                         <Button Name="File" Content="File" 
                             Width="50" Height="20"
@@ -137,6 +112,26 @@
                                 Width="70" Height="30" 
                                 Margin="5"
                                 Click="Convert"/>
+                    </StackPanel>
+                </Canvas>
+            </TabItem>
+            <TabItem Header="param convert">
+                <Canvas>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500"><StackPanel Name="ParametrizedConvertParameters"
+                                Margin="20" /></ScrollViewer>
+                    <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
+                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="id" /><TextBox Width="100" Name="ParametrizedConvertId"/></WrapPanel>
+                        <ComboBox Name="ParametrizedConvertType"
+                                  MinWidth="150"
+                                  Margin="5"
+                                  HorizontalAlignment="Right"
+                                  SelectionChanged="ParametrizedConvertType_SelectionChanged"/>
+                        <Button Name="ParametrizedConvertBtn"
+                                Content="Convert" 
+                                Width="70" Height="30" 
+                                Margin="5" 
+                                HorizontalAlignment="Right"
+                                Click="ParametrizedConvert"/>
                     </StackPanel>
                 </Canvas>
             </TabItem>
