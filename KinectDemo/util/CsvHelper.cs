@@ -10,12 +10,6 @@ namespace KinectDemo
     {
         // read
 
-        public static void ReadCsvByTokens(string filePath,
-                                           Action<int, string> tokenProcessor)
-        {
-            ReadCsvByTokens(filePath, null, tokenProcessor);
-        }
-
         public static void ReadCsvByTokens(string filePath, 
                                            Action<int, string> firstTokenProcessor, 
                                            Action<int, string> anyTokenProcessor) {
@@ -104,19 +98,21 @@ namespace KinectDemo
         public static List<PointPositionsList> ParseFileToPointsPositions(string file)
         {
             List<PointPositionsList> points = new List<PointPositionsList>();
+            long currentTimestamp = 0;
             ReadCsvByTokens(file,
-                            (i, s) => { /* do nothing with first token - it is timestamp */ },
-                            (n, line) => ProcessTokenAndAddPoint(points, n, line));
+                            (n, token) => currentTimestamp = long.Parse(token),
+                            (n, line) => ProcessTokenAndAddPoint(points, line, currentTimestamp));
             return points;
         }
 
-        private static void ProcessTokenAndAddPoint(List<PointPositionsList> points, int lineNumber, string token)
+        private static void ProcessTokenAndAddPoint(List<PointPositionsList> points, string token, long timestamp)
         {
             int pointNumber = int.Parse(token.Split(' ')[0]);
 
             if (points.Count <= pointNumber + 1)
                 points.Add(PointPositionsList.For(pointNumber));
             points[pointNumber].Add(ParsePoint(token));
+            points[pointNumber].timestamps.Add(timestamp);
         }
 
         private static PointPositionsList.Position ParsePoint(string str)

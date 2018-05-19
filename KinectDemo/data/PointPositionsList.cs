@@ -22,7 +22,9 @@ namespace KinectDemo
 
         public static PointPositionsList For(int n) { return new PointPositionsList(n); }
 
-        private List<Position> positions = new List<Position>();
+        public List<Position> positions = new List<Position>();
+
+        public List<long> timestamps = new List<long>();
 
         public void Add(Position p) { positions.Add(p); }
 

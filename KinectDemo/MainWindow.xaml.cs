@@ -44,17 +44,14 @@ namespace KinectDemo
         private DataWriter dataWriter;
         private RecordsPlayer recordsPlayer;
         private DataConvertHandler dataConvertHandler;
-        private ParametrizedConverterHandler parametrizedConverterHandler;
 
         public MainWindow()
         {
             InitializeComponent();
             dataConvertHandler = new DataConvertHandler(this);
-            parametrizedConverterHandler = new ParametrizedConverterHandler(this);
             recordsPlayer = new RecordsPlayer(this);
             CreateFoldersIfNeeded();
             InitCombobox(typeof(ConvertStrategy), ConvertType);
-            InitCombobox(typeof(IParametrizedConvertStrategy), ParametrizedConvertType);
         }
 
         private void CreateFoldersIfNeeded()

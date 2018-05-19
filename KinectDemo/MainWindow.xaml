@@ -37,16 +37,16 @@
                     </StackPanel>
 
                     <Label Name="recordLabel" Content="Recording" 
-                           HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                           Canvas.Bottom="0" Canvas.Left="250"
                            Foreground="Red" FontSize="20"
                            Margin="10"
                            Visibility="Hidden" />
                     <Label Name="buffer" Content="" 
-                           HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                           Canvas.Top="0" Canvas.Right="0"
                            Foreground="Red" FontSize="20"
                            Margin="10 85" />
                     <Label Name="fileName" Content="" 
-                           HorizontalAlignment="Right" VerticalAlignment="Top"
+                           Canvas.Top="0" Canvas.Right="0"
                            Foreground="Red" FontSize="20"
                            Margin="10" />
 
@@ -112,26 +112,6 @@
                                 Width="70" Height="30" 
                                 Margin="5"
                                 Click="Convert"/>
-                    </StackPanel>
-                </Canvas>
-            </TabItem>
-            <TabItem Header="param convert">
-                <Canvas>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500"><StackPanel Name="ParametrizedConvertParameters"
-                                Margin="20" /></ScrollViewer>
-                    <StackPanel Canvas.Bottom="0" Canvas.Right="0" Margin="10">
-                        <WrapPanel HorizontalAlignment="Right" Margin="5"><Label Content="id" /><TextBox Width="100" Name="ParametrizedConvertId"/></WrapPanel>
-                        <ComboBox Name="ParametrizedConvertType"
-                                  MinWidth="150"
-                                  Margin="5"
-                                  HorizontalAlignment="Right"
-                                  SelectionChanged="ParametrizedConvertType_SelectionChanged"/>
-                        <Button Name="ParametrizedConvertBtn"
-                                Content="Convert" 
-                                Width="70" Height="30" 
-                                Margin="5" 
-                                HorizontalAlignment="Right"
-                                Click="ParametrizedConvert"/>
                     </StackPanel>
                 </Canvas>
             </TabItem>

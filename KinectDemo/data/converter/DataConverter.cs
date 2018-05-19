@@ -29,6 +29,8 @@ namespace KinectDemo
             
             FilesHelper.WriteLogLine(resultDir + Constants.LOG_FILE_NAME, ConvertStrategy.GetLogSummary(result));
             CsvHelper.WriteCsv(resultFilePath, result, ConvertStrategy.DoIndexesMatter());
+
+            FilesToConvert = null;
         }
 
     }

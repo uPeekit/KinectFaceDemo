@@ -96,17 +96,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="data\converter\strategy\impl\AverageSpeed.cs" />
     <Compile Include="data\converter\strategy\impl\CommonValues.cs" />
     <Compile Include="data\converter\strategy\impl\DistinctValuesCount.cs" />
+    <Compile Include="data\converter\strategy\impl\MaxDeltaPerFrame.cs" />
+    <Compile Include="data\converter\strategy\impl\MaxDeltaWithStartPosition.cs" />
     <Compile Include="data\converter\strategy\impl\MostMovingPoints.cs" />
     <Compile Include="data\converter\strategy\NoIndexesConvertStrategy.cs" />
-    <Compile Include="data\parametrized_converter\impl\DummyParametrConverter.cs" />
-    <Compile Include="data\parametrized_converter\impl\PrepareLabeledData.cs" />
-    <Compile Include="data\parametrized_converter\ParametrizedConverter.cs" />
-    <Compile Include="data\parametrized_converter\options\FileSelector.cs" />
-    <Compile Include="data\parametrized_converter\options\Parameter.cs" />
-    <Compile Include="data\parametrized_converter\IParametrizedConvertStrategy.cs" />
-    <Compile Include="data\parametrized_converter\ParametrizedConverterHandler.cs" />
     <Compile Include="data\NamedIndexedList.cs" />
     <Compile Include="data\converter\strategy\impl\AverageDistance.cs" />
     <Compile Include="data\converter\strategy\ConvertStrategy.cs" />
@@ -117,12 +113,9 @@
     <Compile Include="data\converter\strategy\impl\UsingPointsDeltasConvertStrategy.cs" />
     <Compile Include="data\player\RecordsPlayer.cs" />
     <Compile Include="events\EventsConvert.cs" />
-    <Compile Include="events\EventsParametrizedConvert.cs" />
     <Compile Include="events\EventsPlay.cs" />
     <Compile Include="events\EventsWriter.cs" />
     <Compile Include="util\FilesHelper.cs" />
-    <Compile Include="util\ListsHelper.cs" />
-    <Compile Include="util\PointsHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
