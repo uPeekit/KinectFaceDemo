@@ -65,9 +65,9 @@
             <TabItem Header="play">
                 <Canvas>
                     <Viewbox Stretch="Uniform">
-                        <Canvas Name="playerCanvas" Background="DarkGray" Width="730" Height="540" AllowDrop="true" Drop="FileDrop" />
+                        <Canvas Name="playerCanvas" Background="Black" Width="730" Height="540" AllowDrop="true" Drop="FileDrop" />
                     </Viewbox>
-                    <WrapPanel Canvas.Top="20" Canvas.Left="20"><Label Content="Speed" /><Slider Width="500" Name="SliderSpeed" Minimum="0.1" Maximum="4" Value="1" ValueChanged="SliderSpeedChanged" /></WrapPanel>
+                    <WrapPanel Canvas.Top="20" Canvas.Left="20"><Label Content="Speed" Foreground="White" /><Slider Width="500" Name="SliderSpeed" Minimum="0.1" Maximum="4" Value="1" ValueChanged="SliderSpeedChanged" /></WrapPanel>
                     <Slider Canvas.Bottom="30" Canvas.Left="10" Height="250" Name="SliderY" Minimum="-100" Maximum="500" Value="150" Orientation="Vertical" ValueChanged="SliderYChanged">
                         <Slider.RenderTransform><RotateTransform Angle="180" CenterX="10" CenterY="120"></RotateTransform></Slider.RenderTransform>
                     </Slider>
@@ -87,7 +87,7 @@
                             Margin="5"
                             Click="StopPlayingFile" />
                     </StackPanel>
-                    <Label Canvas.Bottom="10" Canvas.Right="100"  Name="PlayingFileName" />
+                    <Label Canvas.Bottom="10" Canvas.Right="100"  Name="PlayingFileName" Foreground="White" />
                 </Canvas>
             </TabItem>
             <TabItem Header="convert">

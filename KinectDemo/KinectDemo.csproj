@@ -97,11 +97,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="data\converter\strategy\impl\AverageSpeed.cs" />
+    <Compile Include="data\converter\strategy\impl\CleanData.cs" />
     <Compile Include="data\converter\strategy\impl\CommonValues.cs" />
     <Compile Include="data\converter\strategy\impl\DistinctValuesCount.cs" />
     <Compile Include="data\converter\strategy\impl\MaxDeltaPerFrame.cs" />
     <Compile Include="data\converter\strategy\impl\MaxDeltaWithStartPosition.cs" />
     <Compile Include="data\converter\strategy\impl\MostMovingPoints.cs" />
+    <Compile Include="data\converter\strategy\impl\Rescale.cs" />
     <Compile Include="data\converter\strategy\NoIndexesConvertStrategy.cs" />
     <Compile Include="data\NamedIndexedList.cs" />
     <Compile Include="data\converter\strategy\impl\AverageDistance.cs" />

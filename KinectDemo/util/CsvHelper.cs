@@ -57,6 +57,7 @@ namespace KinectDemo
         {
             using (var stream = new StreamWriter(filePath))
             {
+                if(headers != null)
                 stream.WriteLineAsync(AggrListToCsvString(headers)).Wait();
                 List<string> line;
                 for (var i = 0; i < data.Count; ++i)
@@ -156,6 +157,11 @@ namespace KinectDemo
 
         public static List<NamedIndexedList> ParseFileToNamedIndexedLists(string fileToAnalyse, bool firstIndexColumn)
         {
+            return ParseFileToNamedIndexedLists(fileToAnalyse, firstIndexColumn, Constants.CSV_SEPARATOR);
+        }
+
+        public static List<NamedIndexedList> ParseFileToNamedIndexedLists(string fileToAnalyse, bool firstIndexColumn, char separator)
+        {
             List<NamedIndexedList> result = new List<NamedIndexedList>();
             using (var stream = new StreamReader(fileToAnalyse))
             {
@@ -168,7 +174,7 @@ namespace KinectDemo
                 while ((line = stream.ReadLine()) != null)
                 {
                     i++;
-                    lineTokens = line.Split(Constants.CSV_SEPARATOR).ToList();
+                    lineTokens = line.Split(separator).ToList();
                     for (var columnIndex = 0; columnIndex < lineTokens.Count; ++columnIndex)
                     {
                         if(firstIndexColumn && columnIndex == 0)

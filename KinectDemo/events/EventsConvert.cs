@@ -7,12 +7,12 @@ namespace KinectDemo
     {
         private void Convert(object sender, RoutedEventArgs e)
         {
-            //ExecuteCatchingException(() =>
-            //{
+            ExecuteCatchingException(() =>
+            {
                 dataConvertHandler.Convert();
 
                 ShowPopupDone();
-            //});
+            });
         }
 
         private void ChooseConvertFiles(object sender, RoutedEventArgs e)

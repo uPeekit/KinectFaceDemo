@@ -65,7 +65,7 @@ namespace KinectDemo
             long timestamp;
             while ((line = stream.ReadLine()) != null)
             {
-                timestamp = long.Parse(line.Substring(0, 14));
+                timestamp = long.Parse(line.Split(';').Take(1).ToList()[0]);
                 if (prevTimestamp > 0) await Task.Delay((int)((timestamp - prevTimestamp) / speedFactor));
                 //await Task.Delay(30);
                 prevTimestamp = timestamp;
@@ -106,6 +106,11 @@ namespace KinectDemo
 
         private DepthSpacePoint MapCameraPoint(CameraSpacePoint toMap)
         {
+            //return new DepthSpacePoint
+            //{
+            //    X = (toMap.X * 1000 + 100) + recX,
+            //    Y = (toMap.Y * 1000 + 100) + recY
+            //};
             return new DepthSpacePoint()
             {
                 X = toMap.X * 600f / -0.4f + recX,
@@ -117,18 +122,44 @@ namespace KinectDemo
         {
             if (_points.Count == 0)
             {
+                List<double> fscores = CsvHelper.ParseFileToNamedIndexedLists("C:\\KinectData\\converted\\f_scores.csv", true, ',')[0].OnlyValues();
+                double maxscore = fscores.Max();
+                List<Color> gradient = CreateGradient(Colors.Yellow, Colors.Red);
+                bool special;
                 for (int index = 0; index < POINTS_COUNT; index++)
                 {
+                    special = new List<int> { 3529, 3015 }.Select(n => n % 1347).Contains(index);
                     Ellipse ellipse = new Ellipse
                     {
-                        Width = 1.5,
-                        Height = 1.5,
-                        Fill = new SolidColorBrush(Colors.Red)
+                        Width = special ? 6 : 2,
+                        Height = special ? 6 : 2,
+                        Fill = new SolidColorBrush(special ? Colors.LightBlue : gradient[(int)(fscores[index] / maxscore * 100)])
                     };
                     _points.Add(ellipse);
                     mainWindow.AddPlayerPoint(ellipse);
                 }
             }
+        }
+
+        private List<Color> CreateGradient(Color from, Color to)
+        {
+            int size = 101;
+            int rMax = from.R;
+            int rMin = to.R;
+            int gMax = from.G;
+            int gMin = to.G;
+            int bMax = from.B;
+            int bMin = to.B;
+
+            var colorList = new List<Color>();
+            for (int i = 0; i < size; i++)
+            {
+                var rAverage = rMin + (rMax - rMin) * i / size;
+                var gAverage = gMin + (gMax - gMin) * i / size;
+                var bAverage = bMin + (bMax - bMin) * i / size;
+                colorList.Add(Color.FromRgb((byte)rAverage, (byte)gAverage, (byte)bAverage));
+            }
+            return colorList;
         }
         
     }
